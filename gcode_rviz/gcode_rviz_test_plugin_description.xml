@@ -1,0 +1,7 @@
+<library path="libgcode_rviz_render_tools">
+    <class name="gcode_rviz/OpenGcode" type="gcode_rviz::OpenGcodePanel" base_class_type="rviz::Panel">
+        <description>
+            Test rviz plugin
+        </description>
+    </class>
+</library>
