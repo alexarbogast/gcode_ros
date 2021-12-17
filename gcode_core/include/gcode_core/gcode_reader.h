@@ -4,6 +4,8 @@
 #include <string>
 #include <fstream>
 #include <sstream>
+#include <memory>
+
 
 namespace gcode_core
 {

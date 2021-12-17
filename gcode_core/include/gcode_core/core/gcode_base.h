@@ -4,9 +4,12 @@
 #include <vector>
 
 #include "gcode_core/core/command.h"
+#include "gcode_core/core/macros.h"
 
 namespace gcode_core
 {
+GCODE_CORE_CLASS_FORWARD(GcodeBase);
+
 class GcodeBase
 {
 public:

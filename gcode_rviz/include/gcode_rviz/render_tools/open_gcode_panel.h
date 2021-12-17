@@ -6,6 +6,11 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QLineEdit>
+#include <QTextEdit>
+
+#include "gcode_core/core/gcode_base.h"
+
+using namespace gcode_core; 
 
 namespace gcode_rviz
 {
@@ -23,9 +28,10 @@ private Q_SLOTS:
     void BrowseButtonClicked();
 
 protected:
-     QPushButton* browse_button_;
-     QLineEdit* filepath_line_edit_;
+    QPushButton* browse_button_;
+    QLineEdit* filepath_line_edit_;
 
+    GcodeBasePtr gcode_;
 };
 
 } //namespace gcode_rviz

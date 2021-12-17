@@ -12,6 +12,7 @@
   <depend>pluginlib</depend>
   <depend>roscpp</depend>
   <depend>rviz</depend>
+  <depend>gcode_core</depend>
 
   <export>
     <rviz plugin="${prefix}/gcode_rviz_test_plugin_description.xml"/>

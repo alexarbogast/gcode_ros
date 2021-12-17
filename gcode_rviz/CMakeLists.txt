@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	rviz
 	pluginlib
+	gcode_core
 )
 
 # Qt Stuff

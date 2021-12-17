@@ -2,5 +2,5 @@
 <launch>
     <!-- Launch visualization -->
     <node pkg="rviz" type="rviz" name="open_gcode_plugin_example"
-         args="-d $(find gcode_rviz)/rviz/opengcode.rviz" />
+         args="-d $(find gcode_rviz)/rviz/opengcode.rviz" output="screen"/>
 </launch>
