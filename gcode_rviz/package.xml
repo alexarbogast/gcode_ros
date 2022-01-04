@@ -12,6 +12,7 @@
   <depend>pluginlib</depend>
   <depend>roscpp</depend>
   <depend>rviz</depend>
+  <depend>visualization_msgs</depend>
   <depend>gcode_core</depend>
 
   <export>

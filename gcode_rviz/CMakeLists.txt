@@ -5,6 +5,7 @@ find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	rviz
 	pluginlib
+	visualization_msgs
 	gcode_core
 )
 
@@ -41,6 +42,7 @@ catkin_package(
 		roscpp
 		rviz
 		pluginlib
+		visualization_msgs
 	DEPENDS
 		QT
 )

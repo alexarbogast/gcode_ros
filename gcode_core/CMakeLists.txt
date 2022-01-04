@@ -18,6 +18,7 @@ include_directories(
 
 add_library(${PROJECT_NAME} 
     src/core/gcode_base.cpp
+    src/utils/command_utils.cpp
     src/flavor_impl/marlin_move_command.cpp
     src/flavor_impl/marlin_gcode.cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC

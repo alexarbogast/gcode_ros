@@ -3,24 +3,24 @@
 
 namespace gcode_core
 {
-MarlinMoveCommand::MarlinMoveCommand() { }
-
 void MarlinMoveCommand::parse(std::stringstream& args)
 {
+    TranslationPart trans = waypoint_.translation();
     std::string token;
+
     while (args >> token)
     {
         char c = token[0];
         switch (toupper(c))
         {
             case 'X':
-                x_ = std::stof(token.substr(1));
+                trans[0] = std::stod(token.substr(1));
                 break;
             case 'Y':
-                y_ = std::stof(token.substr(1));
+                trans[1] = std::stod(token.substr(1));
                 break;
             case 'Z':
-                z_ = std::stof(token.substr(1));
+                trans[2] = std::stod(token.substr(1));
                 break;
             default:
                 break;
@@ -31,9 +31,11 @@ void MarlinMoveCommand::parse(std::stringstream& args)
 void MarlinMoveCommand::print() const
 {
     std::stringstream ss;
-    ss << "X" << std::to_string(x_) << " "
-       << "Y" << std::to_string(y_) << " "
-       << "Z" << std::to_string(z_) << " ";
+    ConstTranslationPart trans = waypoint_.translation();
+
+    ss << "X" << std::to_string(trans[0]) << " "
+       << "Y" << std::to_string(trans[1]) << " "
+       << "Z" << std::to_string(trans[2]) << " ";
     
     std::cout << ss.str() << std::endl;
 }

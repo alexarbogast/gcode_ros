@@ -4,9 +4,19 @@
 #include <memory>
 #include <vector>
 #include <sstream>
+#include <typeindex>
 
 namespace gcode_core
 {
+enum class CommandType
+{
+    None = 0,
+    MoveCommand
+};
+
+#define COMMAND_CLASS_TYPE(type) static CommandType GetStaticType() { return CommandType::type; }\
+    virtual CommandType GetCommandType() const { return GetStaticType(); }
+
 namespace detail_command
 {
 struct CommandInnerBase
@@ -18,7 +28,11 @@ struct CommandInnerBase
     CommandInnerBase(CommandInnerBase&&) = delete;
     CommandInnerBase& operator=(CommandInnerBase&&) = delete;
 
+    virtual CommandType GetCommandType() const = 0;
     virtual std::unique_ptr<CommandInnerBase> clone() const = 0;
+
+    virtual void* recover() = 0;
+    virtual const void* recover() const = 0;
 
     // User-defined methods
     virtual void parse(std::stringstream& args) = 0;
@@ -38,7 +52,11 @@ struct CommandInner final : CommandInnerBase
     explicit CommandInner(T command) : command_(std::move(command)) {}
     explicit CommandInner(T&& command) : command_(std::move(command)) {}
 
+    CommandType GetCommandType() const final { return command_.GetCommandType(); }
     std::unique_ptr<CommandInnerBase> clone() const final { return std::make_unique<CommandInner>(command_); }
+
+    void* recover() final { return &command_; }
+    const void* recover() const final { return &command_; }
 
     // User defined methods
     void parse(std::stringstream& args) final { command_.parse(args); }
@@ -48,6 +66,7 @@ private:
     T command_;
 };
 } // namespace detail_command
+
 
 class Command
 {
@@ -91,8 +110,30 @@ public:
       return (*this);
     }
 
+    CommandType GetCommandType() const { return command_->GetCommandType(); }
+
     void parse(std::stringstream& args) const { command_->parse(args); }
     void print() const { command_->print(); }
+
+    template <typename T>
+    T& as()
+    {
+        if (GetCommandType() != T::GetStaticType())
+            throw std::bad_cast();
+
+        auto* p = static_cast<uncvref_t<T>*>(command_->recover());
+        return *p;
+    }
+
+    template <typename T>
+    const T& as() const
+    {
+        if (GetCommandType() != T::GetStaticType())
+            throw std::bad_cast();
+
+        const auto* p = static_cast<uncvref_t<T>*>(command_->recover());
+        return *p;
+    }
 private:
     Command()  // NOLINT
     : command_(nullptr)
