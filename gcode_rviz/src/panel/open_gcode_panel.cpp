@@ -3,7 +3,7 @@
 
 #include <gcode_core/gcode_reader.h>
 #include <gcode_core/flavor_impl/marlin_gcode.h>
-#include <gcode_rviz/render_tools/open_gcode_panel.h>
+#include <gcode_rviz/panel/open_gcode_panel.h>
 
 namespace gcode_rviz
 {
@@ -12,6 +12,11 @@ OpenGcodePanel::~OpenGcodePanel() = default;
 
 void OpenGcodePanel::onInitialize()
 {
+    // initialize rviz_visual_tools
+    rvt_.reset(new rviz_visual_tools::RvizVisualTools("world", "/rviz_visual_tools"));
+    rvt_->loadMarkerPub();
+    rvt_->enableBatchPublishing();
+
     QGridLayout* layout = new QGridLayout();
     setLayout(layout);
 
@@ -28,7 +33,7 @@ void OpenGcodePanel::onInitialize()
     file_layout->addWidget(filepath_line_edit_);
     file_layout->addWidget(browse_button_);
 
-    layout->addLayout(file_layout, 0, 0);
+    layout->addLayout(file_layout, 0, 0);   
 }
 
 void OpenGcodePanel::BrowseButtonClicked()
@@ -43,11 +48,54 @@ void OpenGcodePanel::BrowseButtonClicked()
         gcode_ = std::make_shared<MarlinGcode>();
         GcodeReader::ParseGcode(filepath, *gcode_);
     }
+
+    DisplayToolpath();
+}
+
+//void OpenGcodePanel::SimplifyDouglasPeucker(EigenSTL::vector_Vector3d::iterator begin, double tolerance)
+//{
+//    if (path.size() < 3)
+//        return;
+//
+//    //for (auto& waypoint : path)
+//    //{
+//    //    double dist = ()
+//    //}
+//} 
+
+void OpenGcodePanel::DisplayToolpath() const
+{
+    rvt_->deleteAllMarkers();
+
+    double current_z = 0.0;
+
+    EigenSTL::vector_Vector3d path;
+    EigenSTL::vector_Vector3d::iterator layer_begin = path.begin();
+
+    for (const auto& cmd : *gcode_)
+    {
+        if (cmd.GetCommandType() == MoveCommand::GetStaticType())
+        {
+            Eigen::Vector3d waypoint = cmd.as<MoveCommand>().translation() / 1000; 
+            
+            //if (waypoint.z() != current_z)
+            //{   
+            //    EigenSTL::vector_Vector3d& layer = {layer_begin, layer.end()};
+            //    layer.empty();
+            //    layer_begin
+            //    current_z = waypoint.z();
+            //}
+
+            path.emplace_back(waypoint);            
+        }
+    }
+
+    rvt_->publishPath(path, rviz_visual_tools::RAND);
+    rvt_->trigger();
 }
 
 } // namespace gcode_rviz
 
 #include <class_loader/class_loader.hpp>
-#include <gcode_rviz/render_tools/open_gcode_panel.h>
 
 CLASS_LOADER_REGISTER_CLASS(gcode_rviz::OpenGcodePanel, rviz::Panel)

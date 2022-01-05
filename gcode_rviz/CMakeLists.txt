@@ -6,8 +6,11 @@ find_package(catkin REQUIRED COMPONENTS
 	rviz
 	pluginlib
 	visualization_msgs
+	rviz_visual_tools
 	gcode_core
 )
+
+#find_package(rviz_visual_tools REQUIRED)
 
 # Qt Stuff
 if(rviz_QT_VERSION VERSION_LESS "5")
@@ -43,6 +46,7 @@ catkin_package(
 		rviz
 		pluginlib
 		visualization_msgs
+		rviz_visual_tools
 	DEPENDS
 		QT
 )
@@ -55,15 +59,17 @@ include_directories(
 
 # Rviz Render Tools
 qt_wrap_cpp(${PROJECT_NAME}_render_tools_cpp_MOCS
-	include/gcode_rviz/render_tools/open_gcode_panel.h)
+	include/gcode_rviz/panel/open_gcode_panel.h)
 
 add_library(${PROJECT_NAME}_render_tools SHARED
-	src/render_tools/open_gcode_panel.cpp
+	src/panel/open_gcode_panel.cpp
 	${${PROJECT_NAME}_render_tools_cpp_MOCS})
 
 target_link_libraries(${PROJECT_NAME}_render_tools PUBLIC
 	${catkin_LIBRARIES}
-	${QT_LIBRARIES})
+	${QT_LIBRARIES}
+	${rviz_visual_tools_LIBRARIES}
+)
 
 target_include_directories(${PROJECT_NAME}_render_tools PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"

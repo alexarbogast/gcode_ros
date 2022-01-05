@@ -14,6 +14,7 @@
   <depend>rviz</depend>
   <depend>visualization_msgs</depend>
   <depend>gcode_core</depend>
+  <depend>rviz_visual_tools</depend>
 
   <export>
     <rviz plugin="${prefix}/gcode_rviz_test_plugin_description.xml"/>

@@ -4,7 +4,6 @@
 #include <memory>
 #include <vector>
 #include <sstream>
-#include <typeindex>
 
 namespace gcode_core
 {
