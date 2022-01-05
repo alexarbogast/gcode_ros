@@ -9,6 +9,7 @@
 #include <QLineEdit>
 #include <QTextEdit>
 
+#include "gcode_rviz/widget/gcode_visualization_widget.h"
 #include "gcode_core/core/gcode_base.h"
 
 using namespace gcode_core; 
@@ -33,6 +34,8 @@ private Q_SLOTS:
 protected:
     QPushButton* browse_button_;
     QLineEdit* filepath_line_edit_;
+
+    GcodeVisualizationWidget* viz_widget_;
 
     GcodeBasePtr gcode_;
     rviz_visual_tools::RvizVisualToolsPtr rvt_;

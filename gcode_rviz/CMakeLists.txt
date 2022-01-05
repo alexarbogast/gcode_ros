@@ -40,13 +40,14 @@ catkin_package(
 		include
 		${QT_INCLUDE_DIR}
 	LIBRARIES
-		${PROJECT_NAME}_render_tools
-	CATKIN_DEPENDS
+		${PROJECT_NAME}_gcode_visualization_widget
+		${PROJECT_NAME}_open_gcode_panel
 		roscpp
 		rviz
 		pluginlib
 		visualization_msgs
 		rviz_visual_tools
+		gcode_core
 	DEPENDS
 		QT
 )
@@ -57,29 +58,48 @@ include_directories(
 	SYSTEM ${QT_INCLUDE_DIR}
 )
 
-# Rviz Render Tools
-qt_wrap_cpp(${PROJECT_NAME}_render_tools_cpp_MOCS
-	include/gcode_rviz/panel/open_gcode_panel.h)
+# gcode_visualization_widget
+qt_wrap_cpp(${PROJECT_NAME}_gcode_visualization_widget_cpp_MOCS
+	include/gcode_rviz/widget/gcode_visualization_widget.h)
 
-add_library(${PROJECT_NAME}_render_tools SHARED
-	src/panel/open_gcode_panel.cpp
-	${${PROJECT_NAME}_render_tools_cpp_MOCS})
+add_library(${PROJECT_NAME}_gcode_visualization_widget SHARED
+	src/widget/gcode_visualization_widget.cpp
+	${${PROJECT_NAME}_gcode_visualization_widget_cpp_MOCS})
 
-target_link_libraries(${PROJECT_NAME}_render_tools PUBLIC
+target_link_libraries(${PROJECT_NAME}_gcode_visualization_widget PUBLIC
 	${catkin_LIBRARIES}
 	${QT_LIBRARIES}
-	${rviz_visual_tools_LIBRARIES}
-)
+	${rviz_visual_tools_LIBRARIES})
 
-target_include_directories(${PROJECT_NAME}_render_tools PUBLIC
+target_include_directories(${PROJECT_NAME}_gcode_visualization_widget PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     "$<INSTALL_INTERFACE:include>")
-target_include_directories(${PROJECT_NAME}_render_tools SYSTEM PUBLIC
+target_include_directories(${PROJECT_NAME}_gcode_visualization_widget SYSTEM PUBLIC
+	${catkin_INCLUDE_DIRS}
+	${QT_INCLUDE_DIR})
+
+# open_gcode_panel
+qt_wrap_cpp(${PROJECT_NAME}_open_gcode_panel_cpp_MOCS
+	include/gcode_rviz/panel/open_gcode_panel.h)
+
+add_library(${PROJECT_NAME}_open_gcode_panel SHARED
+	src/panel/open_gcode_panel.cpp
+	${${PROJECT_NAME}_open_gcode_panel_cpp_MOCS})
+
+target_link_libraries(${PROJECT_NAME}_open_gcode_panel PUBLIC
+	${PROJECT_NAME}_gcode_visualization_widget
+	${catkin_LIBRARIES}
+	${QT_LIBRARIES})
+
+target_include_directories(${PROJECT_NAME}_open_gcode_panel PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+    "$<INSTALL_INTERFACE:include>")
+target_include_directories(${PROJECT_NAME}_open_gcode_panel SYSTEM PUBLIC
 	${catkin_INCLUDE_DIRS}
 	${QT_INCLUDE_DIR})
 
 # Mark executables and/or libraries for installation
-install(TARGETS ${PROJECT_NAME}_render_tools
+install(TARGETS ${PROJECT_NAME}_open_gcode_panel
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}

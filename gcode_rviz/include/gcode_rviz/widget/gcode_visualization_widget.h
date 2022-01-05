@@ -1,32 +1,27 @@
 #ifndef GCODE_VISUALIZATION_WIDGET_H
 #define GCODE_VISUALIZATION_WIDGET_H
 
-#include <rviz/display.h>
+#include <rviz_visual_tools/rviz_visual_tools.h>
 
-#ifndef Q_MOC_RUN
-#include <ros/ros.h>
-#include <visualization_msgs/MarkerArray.h>
-#endif
+#include <QWidget>
+#include <QPushButton>
 
-// forward declarations
-namespace rviz
-{
-    class Property;
-} // namespace rviz
+#include "gcode_core/core/gcode_base.h"
+
+using namespace gcode_core;
 
 namespace gcode_rviz
 {
-class GcodeVisualizationWidget : public QObject
+class GcodeVisualizationWidget : public QWidget
 {
+Q_OBJECT
 public:
-    GcodeVisualizationWidget(rviz::Property* widget, rviz::Display* display);
+    GcodeVisualizationWidget(QWidget* parent = 0);
     virtual ~GcodeVisualizationWidget();
 
-    void setDisplayTrajectory(const visualization_msgs::MarkerArray::ConstPtr& msg);
-
-private:
-    rviz::Property* widget_;
-    rviz::Display* display_;
+    void DisplayGcode(GcodeBaseConstPtr gcode);
+protected:
+    rviz_visual_tools::RvizVisualToolsPtr rvt_;
 };
 
 } // namespace gcode_rviz

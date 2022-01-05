@@ -1,4 +1,4 @@
-<library path="libgcode_rviz_render_tools">
+<library path="libgcode_rviz_open_gcode_panel">
     <class name="gcode_rviz/OpenGcode" type="gcode_rviz::OpenGcodePanel" base_class_type="rviz::Panel">
         <description>
             Test rviz plugin
