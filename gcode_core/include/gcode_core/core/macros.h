@@ -14,7 +14,7 @@
     class C;                                                                            \
     GCODE_CORE_DECLARE_PTR(C, C)                                                        \
 
-#define GCODE_CORE_CREATE_ITERATORS(Class, Container)                                   \
+#define GCODE_CORE_CONTAINER_FORWARD(Class, Container)                                  \
     using iterator = typename std::vector<Class>::iterator;                             \
     using const_iterator = typename std::vector<Class>::const_iterator;                 \
     using reverse_iterator = typename std::vector<Class>::reverse_iterator;             \
@@ -32,6 +32,9 @@
     const_iterator cend() const { return Container.cend(); }                            \
     const_reverse_iterator crbegin() const { return Container.crbegin(); }              \
     const_reverse_iterator crend() const { return Container.crend(); }                  \
+                                                                                        \
+    bool empty() const { return Container.empty(); }                                    \
+    size_t size() const { return Container.size(); }                                    \
 
 
 #endif // GCODE_CORE_MACROS_H

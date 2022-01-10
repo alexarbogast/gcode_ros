@@ -19,6 +19,6 @@ int main()
     
     Toolpath& toolpath = gcode.toolpath();
     
-    std::cout << toolpath << std::endl;;
+    std::cout << toolpath << std::endl;
     return 0;
 }

@@ -3,7 +3,8 @@
 
 #include <rviz_visual_tools/rviz_visual_tools.h>
 
-#include <QWidget>
+#include <QSpinBox>
+#include <QSlider>
 #include <QPushButton>
 
 #include "gcode_core/core/gcode.h"
@@ -19,9 +20,23 @@ public:
     GcodeVisualizationWidget(QWidget* parent = 0);
     virtual ~GcodeVisualizationWidget();
 
-    void DisplayGcode(GcodeBaseConstPtr gcode);
+    void SetGcode(GcodeBaseConstPtr gcode);
+
+    void DisplayGcode();
+    void DisplayGcodeLayerRange(unsigned int lower, unsigned int upper);
+
+protected Q_SLOTS:
+    void set_min_layer(int value);
+    void set_max_layer(int value);
+
 protected:
+    GcodeBaseConstPtr gcode_;
     rviz_visual_tools::RvizVisualToolsPtr rvt_;
+
+    QSlider* min_layer_slider_;
+    QSlider* max_layer_slider_;
+    QSpinBox* min_layer_spinbox_;
+    QSpinBox* max_layer_spinbox_;
 };
 
 } // namespace gcode_rviz

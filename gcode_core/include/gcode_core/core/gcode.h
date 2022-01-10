@@ -17,8 +17,9 @@ public:
     virtual ~GcodeBase() = default;
 
     Toolpath& toolpath() { return *toolpath_; }
+    const Toolpath& toolpath() const { return *toolpath_; }
 
-protected:
+private:
     std::unique_ptr<Toolpath> toolpath_ = std::make_unique<Toolpath>();
 };
 

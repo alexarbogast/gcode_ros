@@ -32,6 +32,7 @@ void ParseMoveCommand(std::stringstream& ss, MoveCommand& cmd_object)
 void ParseGcode(const std::string& filepath, GcodeBase& gcode_object)
 {
     Toolpath& toolpath = gcode_object.toolpath();
+    MoveCommand cmd;
 
     std::ifstream filein(filepath, std::ios::in);
     for (std::string line; std::getline(filein, line);)
@@ -54,9 +55,8 @@ void ParseGcode(const std::string& filepath, GcodeBase& gcode_object)
             {
                 if (!toolpath.back().empty())
                 {
-                    MoveCommand cmd;
+                    // initialized as previous command  
                     ParseMoveCommand(ss, cmd);
-
                     toolpath.back().back().push_back(std::make_shared<MoveCommand>(cmd));
                 }
             }

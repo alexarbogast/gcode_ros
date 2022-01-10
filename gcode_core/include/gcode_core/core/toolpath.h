@@ -29,7 +29,15 @@ public:
     void push_back(std::shared_ptr<MoveCommand>&& x) { segments_.push_back(x); }
     void push_back(std::shared_ptr<MoveCommand>& x) { segments_.push_back(x); }
 
-    GCODE_CORE_CREATE_ITERATORS(std::shared_ptr<MoveCommand>, segments_);
+    MoveCommand& back() { return *segments_.back(); }
+    const MoveCommand& back() const { return *segments_.back(); }
+    MoveCommand& front() { return *segments_.front(); }
+    const MoveCommand& front() const { return *segments_.front(); }
+
+    MoveCommand& operator[] (size_t pos) { return *segments_[pos]; }
+    const MoveCommand& operator[] (size_t pos) const { return *segments_[pos]; }
+
+    GCODE_CORE_CONTAINER_FORWARD(std::shared_ptr<MoveCommand>, segments_)
 private:
     std::vector<std::shared_ptr<MoveCommand>> segments_;
 };
@@ -57,9 +65,6 @@ public:
         return ss.str();
     }
 
-    bool empty() const { return beads_.empty(); }
-    size_t size() const { return beads_.size(); }
-
     void push_back(std::shared_ptr<Bead>&& x) { beads_.push_back(x); }
     void push_back(std::shared_ptr<Bead>& x) { beads_.push_back(x); }
 
@@ -71,7 +76,7 @@ public:
     Bead& operator[] (size_t pos) { return *beads_[pos]; }
     const Bead& operator[] (size_t pos) const { return *beads_[pos]; }
 
-    GCODE_CORE_CREATE_ITERATORS(std::shared_ptr<Bead>, beads_);
+    GCODE_CORE_CONTAINER_FORWARD(std::shared_ptr<Bead>, beads_)
 private:
     std::vector<std::shared_ptr<Bead>> beads_;
 };
@@ -103,21 +108,18 @@ public:
         return ss.str();
     }
 
-    bool empty() const { return layers_.empty(); }
-    size_t size() const { return layers_.size(); }
+    Layer& back() { return *layers_.back(); }                                         
+    const Layer& back() const { return *layers_.back(); }                             
+    Layer& front() { return *layers_.front(); }                                       
+    const Layer& front() const { return *layers_.front(); }
 
     void push_back(std::shared_ptr<Layer>&& x) { layers_.push_back(x); }
     void push_back(std::shared_ptr<Layer>& x) { layers_.push_back(x); }
 
-    Layer& back() { return *layers_.back(); }
-    const Layer& back() const { return *layers_.back(); }
-    Layer& front() { return *layers_.front(); }
-    const Layer& front() const { return *layers_.front(); }
-
     Layer& operator[] (size_t pos) { return *layers_[pos]; }
     const Layer& operator[] (size_t pos) const { return *layers_[pos]; }
 
-    GCODE_CORE_CREATE_ITERATORS(std::shared_ptr<Layer>, layers_);
+    GCODE_CORE_CONTAINER_FORWARD(std::shared_ptr<Layer>, layers_)
 private:
     std::vector<std::shared_ptr<Layer>> layers_;
 };
