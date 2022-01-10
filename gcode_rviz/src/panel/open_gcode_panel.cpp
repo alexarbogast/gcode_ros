@@ -1,8 +1,8 @@
 #include <QHBoxLayout>
 #include <QFileDialog>
 
-#include "gcode_core/gcode_reader.h"
-#include "gcode_core/flavor_impl/marlin_gcode.h"
+//#include "gcode_core/gcode_reader.h"
+//#include "gcode_core/flavor_impl/marlin_gcode.h"
 #include "gcode_rviz/panel/open_gcode_panel.h"
 
 namespace gcode_rviz
@@ -44,13 +44,13 @@ void OpenGcodePanel::BrowseButtonClicked()
     filepath_line_edit_->setText(QFileDialog::getOpenFileName(this, "Open Gcode",
         "/home/", "Image Files (*.gcode)"));
 
-    if (!filepath_line_edit_->text().isEmpty())
-    {
-        std::string filepath = filepath_line_edit_->text().toStdString();
-        
-        gcode_ = std::make_shared<MarlinGcode>();
-        GcodeReader::ParseGcode(filepath, *gcode_);
-    }
+    //if (!filepath_line_edit_->text().isEmpty())
+    //{
+    //    std::string filepath = filepath_line_edit_->text().toStdString();
+    //    
+    //    gcode_ = std::make_shared<MarlinGcode>();
+    //    GcodeReader::ParseGcode(filepath, *gcode_);
+    //}
 
     viz_widget_->DisplayGcode(gcode_);
 }

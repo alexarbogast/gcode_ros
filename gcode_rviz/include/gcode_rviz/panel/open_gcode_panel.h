@@ -10,7 +10,7 @@
 #include <QTextEdit>
 
 #include "gcode_rviz/widget/gcode_visualization_widget.h"
-#include "gcode_core/core/gcode_base.h"
+#include "gcode_core/core/gcode.h"
 
 using namespace gcode_core; 
 

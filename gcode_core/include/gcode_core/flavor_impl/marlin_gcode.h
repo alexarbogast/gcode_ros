@@ -1,17 +1,23 @@
-#ifndef MARLIN_GCODE_H
-#define MARLIN_GCODE_H
+#ifndef MARLIN_GCODE_READER_H
+#define MARLIN_GCODE_READER_H
 
-#include "gcode_core/core/gcode_base.h"
-#include "gcode_core/flavor_impl/marlin_move_command.h"
+#include <string>
+#include <fstream>
+#include <sstream>
+#include <memory>
+
+#include "gcode_core/core/gcode.h"
+#include "gcode_core/core/toolpath.h"
+#include "gcode_core/core/move_command.h"
 
 namespace gcode_core
 {
-class MarlinGcode : public GcodeBase
-{  
-public:
-    virtual void parse(std::stringstream& ss) override;
-};
+namespace Marlin
+{
+void ParseGcode(const std::string& filepath, GcodeBase& gcode_object);
+void ParseMoveCommand(std::stringstream& ss, MoveCommand& cmd_object);
 
+} // namespace marlin
 } // namespace gcode_core
 
-#endif // MARLIN_GCODE_H
+#endif // MARLIN_GCODE_READER_H

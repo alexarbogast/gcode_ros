@@ -1,20 +1,24 @@
 #include <fstream>
 #include <iostream>
 
-#include "gcode_core/gcode_reader.h"
 #include <vector>
 #include <algorithm>
 #include "gcode_core/flavor_impl/marlin_gcode.h"
+
+// TEMP
+#include "gcode_core/core/toolpath.h"
 
 using namespace gcode_core;
 
 int main()
 {
-    std::string filepath = "/home/alex/Desktop/cylindermod.gcode";
+    std::string filepath = "/home/alex/Downloads/CFFFP_square.gcode";
 
-    MarlinGcode gcode;
-    GcodeReader::ParseGcode(filepath, gcode);
-
-    gcode.print();
+    GcodeBase gcode;
+    Marlin::ParseGcode(filepath, gcode);
+    
+    Toolpath& toolpath = gcode.toolpath();
+    
+    std::cout << toolpath << std::endl;;
     return 0;
 }
