@@ -23,17 +23,17 @@ void OpenGcodePanel::onInitialize()
     filepath_line_edit_->setPlaceholderText("gcode filepath");
 
     browse_button_ = new QPushButton();
-    browse_button_->setText(tr("browse"));
+    browse_button_->setText(tr("..."));
     browse_button_->setToolTip(tr("Load gcode file"));
     connect(browse_button_, SIGNAL(clicked()), this, SLOT(BrowseButtonClicked()));
     
     viz_widget_ = new GcodeVisualizationWidget(this);
 
     QHBoxLayout* file_layout = new QHBoxLayout();
-    file_layout->addWidget(new QLabel("Gcode file:", nullptr));
     file_layout->addWidget(filepath_line_edit_);
     file_layout->addWidget(browse_button_);
 
+    main_layout->addWidget(new QLabel("Gcode file:", nullptr));
     main_layout->addLayout(file_layout);   
     main_layout->addWidget(viz_widget_);
     main_layout->addStretch();

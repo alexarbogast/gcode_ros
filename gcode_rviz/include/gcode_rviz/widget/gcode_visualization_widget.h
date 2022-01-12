@@ -7,6 +7,7 @@
 #include <QSlider>
 #include <QPushButton>
 
+#include "gcode_rviz/widget/color_list_editor.h"
 #include "gcode_core/core/gcode.h"
 
 using namespace gcode_core;
@@ -21,22 +22,24 @@ public:
     virtual ~GcodeVisualizationWidget();
 
     void SetGcode(GcodeBaseConstPtr gcode);
-
-    void DisplayGcode();
-    void DisplayGcodeLayerRange(unsigned int lower, unsigned int upper);
+    void DisplayGcodeLayerRange();
+    void DisplayGcodeLines();
 
 protected Q_SLOTS:
     void set_min_layer(int value);
     void set_max_layer(int value);
 
 protected:
-    GcodeBaseConstPtr gcode_;
+    GcodeBaseConstPtr gcode_ = nullptr;
     rviz_visual_tools::RvizVisualToolsPtr rvt_;
 
     QSlider* min_layer_slider_;
     QSlider* max_layer_slider_;
     QSpinBox* min_layer_spinbox_;
     QSpinBox* max_layer_spinbox_;
+    
+    QDoubleSpinBox* line_width_;
+    ColorListEditor* color_list_editor_;
 };
 
 } // namespace gcode_rviz

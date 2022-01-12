@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
 	rviz
 	pluginlib
 	visualization_msgs
+	eigen_conversions
 	rviz_visual_tools
 	gcode_core
 )
@@ -46,6 +47,7 @@ catkin_package(
 		rviz
 		pluginlib
 		visualization_msgs
+		eigen_conversion
 		rviz_visual_tools
 		gcode_core
 	DEPENDS
@@ -60,10 +62,12 @@ include_directories(
 
 # gcode_visualization_widget
 qt_wrap_cpp(${PROJECT_NAME}_gcode_visualization_widget_cpp_MOCS
-	include/gcode_rviz/widget/gcode_visualization_widget.h)
+	include/gcode_rviz/widget/gcode_visualization_widget.h
+	include/gcode_rviz/widget/color_list_editor.h)
 
 add_library(${PROJECT_NAME}_gcode_visualization_widget SHARED
 	src/widget/gcode_visualization_widget.cpp
+	src/widget/color_list_editor.cpp
 	${${PROJECT_NAME}_gcode_visualization_widget_cpp_MOCS})
 
 target_link_libraries(${PROJECT_NAME}_gcode_visualization_widget PUBLIC
