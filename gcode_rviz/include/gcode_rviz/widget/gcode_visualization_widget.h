@@ -23,11 +23,11 @@ public:
 
     void SetGcode(GcodeBaseConstPtr gcode);
     void DisplayGcodeLayerRange();
-    void DisplayGcodeLines();
 
 protected Q_SLOTS:
     void set_min_layer(int value);
     void set_max_layer(int value);
+    void pick_color_click();
 
 protected:
     GcodeBaseConstPtr gcode_ = nullptr;
@@ -39,7 +39,10 @@ protected:
     QSpinBox* max_layer_spinbox_;
     
     QDoubleSpinBox* line_width_;
-    ColorListEditor* color_list_editor_;
+    QComboBox* display_style_;
+    QComboBox* color_method_;
+    QPushButton* pick_color_button_; 
+    QColor layer_color_;
 };
 
 } // namespace gcode_rviz
