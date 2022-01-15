@@ -41,18 +41,19 @@ void OpenGcodePanel::onInitialize()
 
 void OpenGcodePanel::BrowseButtonClicked()
 {
-    filepath_line_edit_->setText(QFileDialog::getOpenFileName(this, "Open Gcode",
-        "/home/", "Image Files (*.gcode)"));
+    QString filepath = QFileDialog::getOpenFileName(this, "Open Gcode",
+        "/home/", "Image Files (*.gcode)");
 
-    if (!filepath_line_edit_->text().isEmpty())
+    if (!filepath.isEmpty())
     {
-        std::string filepath = filepath_line_edit_->text().toStdString();
+        filepath_line_edit_->setText(filepath);
+        std::string std_filepath = filepath.toStdString();
         
         gcode_ = std::make_shared<GcodeBase>();
-        Marlin::ParseGcode(filepath, *gcode_);
+        Marlin::ParseGcode(std_filepath, *gcode_);
+        
+        viz_widget_->SetGcode(gcode_);
     }
-
-    viz_widget_->SetGcode(gcode_);
 }
 
 } // namespace gcode_rviz

@@ -11,8 +11,6 @@ find_package(catkin REQUIRED COMPONENTS
 	gcode_core
 )
 
-#find_package(rviz_visual_tools REQUIRED)
-
 # Qt Stuff
 if(rviz_QT_VERSION VERSION_LESS "5")
 	find_package(Qt4 ${rviz_QT_VERSION} REQUIRED QtCore QtGui)
