@@ -1,11 +1,12 @@
 #ifndef GCODE_VISUALIZATION_WIDGET_H
 #define GCODE_VISUALIZATION_WIDGET_H
 
-#include <rviz_visual_tools/rviz_visual_tools.h>
-
 #include <QSpinBox>
+#include <QLineEdit>
 #include <QSlider>
 #include <QPushButton>
+
+#include <rviz_visual_tools/rviz_visual_tools.h>
 
 #include "gcode_rviz/widget/color_list_editor.h"
 #include "gcode_core/core/gcode.h"
@@ -25,6 +26,7 @@ public:
     void DisplayGcodeLayerRange();
 
 protected Q_SLOTS:
+    void set_gcode_frame();
     void set_min_layer(int value);
     void set_max_layer(int value);
     void pick_color_click();
@@ -33,6 +35,7 @@ protected:
     GcodeBaseConstPtr gcode_ = nullptr;
     rviz_visual_tools::RvizVisualToolsPtr rvt_;
 
+    QLineEdit* gcode_frame_;
     QSlider* min_layer_slider_;
     QSlider* max_layer_slider_;
     QSpinBox* min_layer_spinbox_;
