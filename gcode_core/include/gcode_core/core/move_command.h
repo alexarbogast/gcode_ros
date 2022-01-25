@@ -4,8 +4,6 @@
 #include <Eigen/Core>
 #include <Eigen/Geometry>
 
-#include "gcode_core/core/command.h"
-
 namespace gcode_core
 {
 class MoveCommand
@@ -13,18 +11,18 @@ class MoveCommand
 public:
     MoveCommand() = default;
 
-    virtual void parse(std::stringstream& args) = 0;
-    virtual void print() const = 0;
+    std::string to_string() const
+    {
+        auto t = this->translation();
+        std::stringstream ss;
+
+        ss << "MoveCommand: {" << t.x() << ", " << t.y() << ", "<< t.z() << "}\n";
+        return ss.str(); 
+    }
 
     void setWaypoint(Eigen::Isometry3d waypoint) { waypoint_ = std::move(waypoint); }
     Eigen::Isometry3d& getWaypoint() { return waypoint_; }
     const Eigen::Isometry3d& getWaypoint() const { return waypoint_; };
-
-    friend std::stringstream& operator>>(std::stringstream& ss, MoveCommand& cmd)
-    {
-        cmd.parse(ss);
-        return ss;
-    }
 
     using ConstLinearPart = Eigen::Isometry3d::ConstLinearPart;
     using LinearPart = Eigen::Isometry3d::LinearPart;
@@ -46,10 +44,14 @@ public:
     inline operator const Eigen::Isometry3d&() const { return waypoint_; }
     inline operator Eigen::Isometry3d&() { return waypoint_; }
 
-    COMMAND_CLASS_TYPE(MoveCommand)
-protected:
+private:
     Eigen::Isometry3d waypoint_{ Eigen::Isometry3d::Identity() };
 };
+
+inline std::ostream& operator<<(std::ostream&os, const MoveCommand& cmd)
+{
+    return os << cmd.to_string();
+}
 
 } //namespace gcode_core
 

@@ -1,7 +1,6 @@
-#include <QHBoxLayout>
+#include <QBoxLayout>
 #include <QFileDialog>
 
-#include "gcode_core/gcode_reader.h"
 #include "gcode_core/flavor_impl/marlin_gcode.h"
 #include "gcode_rviz/panel/open_gcode_panel.h"
 
@@ -17,42 +16,44 @@ void OpenGcodePanel::onInitialize()
     rvt_->loadMarkerPub();
     rvt_->enableBatchPublishing();
 
-    QGridLayout* layout = new QGridLayout();
-    setLayout(layout);
+    QVBoxLayout* main_layout = new QVBoxLayout();
+    setLayout(main_layout);
 
     filepath_line_edit_ = new QLineEdit();
     filepath_line_edit_->setPlaceholderText("gcode filepath");
 
     browse_button_ = new QPushButton();
-    browse_button_->setText(tr("browse"));
+    browse_button_->setText(tr("..."));
     browse_button_->setToolTip(tr("Load gcode file"));
     connect(browse_button_, SIGNAL(clicked()), this, SLOT(BrowseButtonClicked()));
     
     viz_widget_ = new GcodeVisualizationWidget(this);
 
     QHBoxLayout* file_layout = new QHBoxLayout();
-    file_layout->addWidget(new QLabel("Gcode file:", nullptr));
     file_layout->addWidget(filepath_line_edit_);
     file_layout->addWidget(browse_button_);
-    file_layout->addWidget(viz_widget_);
 
-    layout->addLayout(file_layout, 0, 0);   
+    main_layout->addWidget(new QLabel("Gcode file:", nullptr));
+    main_layout->addLayout(file_layout);   
+    main_layout->addWidget(viz_widget_);
+    main_layout->addStretch();
 }
 
 void OpenGcodePanel::BrowseButtonClicked()
 {
-    filepath_line_edit_->setText(QFileDialog::getOpenFileName(this, "Open Gcode",
-        "/home/", "Image Files (*.gcode)"));
+    QString filepath = QFileDialog::getOpenFileName(this, "Open Gcode",
+        "/home/", "Image Files (*.gcode)");
 
-    if (!filepath_line_edit_->text().isEmpty())
+    if (!filepath.isEmpty())
     {
-        std::string filepath = filepath_line_edit_->text().toStdString();
+        filepath_line_edit_->setText(filepath);
+        std::string std_filepath = filepath.toStdString();
         
-        gcode_ = std::make_shared<MarlinGcode>();
-        GcodeReader::ParseGcode(filepath, *gcode_);
+        gcode_ = std::make_shared<GcodeBase>();
+        Marlin::ParseGcode(std_filepath, *gcode_);
+        
+        viz_widget_->SetGcode(gcode_);
     }
-
-    viz_widget_->DisplayGcode(gcode_);
 }
 
 } // namespace gcode_rviz

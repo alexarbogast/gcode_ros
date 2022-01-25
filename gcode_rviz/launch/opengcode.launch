@@ -1,6 +1,7 @@
 <?xml version="1.0"?>
 <launch>
+    <arg name="rvizconfig" default="$(find gcode_rviz)/rviz/opengcode.rviz"/>
+
     <!-- Launch visualization -->
-    <node pkg="rviz" type="rviz" name="open_gcode_plugin_example"
-         args="-d $(find gcode_rviz)/rviz/opengcode.rviz" output="screen"/>
+    <node pkg="rviz" type="rviz" name="open_gcode_plugin_example" args="-d $(arg rvizconfig)" output="screen"/>
 </launch>
