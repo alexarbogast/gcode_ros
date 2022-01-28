@@ -1,6 +1,7 @@
 #ifndef GCODE_VISUALIZATION_WIDGET_H
 #define GCODE_VISUALIZATION_WIDGET_H
 
+#include <unordered_map>
 #include <QSpinBox>
 #include <QLineEdit>
 #include <QSlider>
@@ -15,6 +16,13 @@ using namespace gcode_core;
 
 namespace gcode_rviz
 {
+std_msgs::ColorRGBA create_color_rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
+const std_msgs::ColorRGBA WALL_OUTER_COLOR = create_color_rgba(223, 91, 30, 255);
+const std_msgs::ColorRGBA WALL_INNER_COLOR = create_color_rgba(58, 183, 149, 255);
+const std_msgs::ColorRGBA SKIN_COLOR = create_color_rgba(139, 133, 193, 255);  
+const std_msgs::ColorRGBA FILL_COLOR = create_color_rgba(255, 207, 86, 255);
+
 class GcodeVisualizationWidget : public QWidget
 {
 Q_OBJECT

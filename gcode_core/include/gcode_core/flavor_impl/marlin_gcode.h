@@ -16,6 +16,7 @@ namespace Marlin
 {
 void ParseGcode(const std::string& filepath, GcodeBase& gcode_object);
 void ParseMoveCommand(std::stringstream& ss, MoveCommand& cmd_object);
+BeadType ParseBeadType(const std::string& line);
 
 } // namespace marlin
 } // namespace gcode_core

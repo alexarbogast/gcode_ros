@@ -4,6 +4,30 @@ namespace gcode_core
 {
 namespace Marlin
 {
+BeadType ParseBeadType(const std::string& line)
+{
+    BeadType type = BeadType::None;
+
+    if (line.find("WALL-INNER") != std::string::npos)
+    {
+        type = BeadType::WallInner;
+    }
+    else if (line.find("WALL-OUTER") != std::string::npos)
+    {
+        type = BeadType::WallOuter;
+    }
+    else if (line.find("SKIN") != std::string::npos)
+    {
+        type = BeadType::Skin;
+    }
+    else if (line.find("FILL") != std::string::npos)
+    {
+        type = BeadType::Fill;
+    }
+
+    return type;
+}
+
 void ParseMoveCommand(std::stringstream& ss, MoveCommand& cmd_object)
 {
     MoveCommand::TranslationPart trans = cmd_object.translation();
@@ -47,16 +71,22 @@ void ParseGcode(const std::string& filepath, GcodeBase& gcode_object)
         }
         else if (command_token.find(";TYPE:") != std::string::npos)                  // new bead
         {
-            toolpath.back().push_back(std::make_shared<Bead>());
+            toolpath.back().push_back(std::make_shared<Bead>(ParseBeadType(command_token)));
         }
         else if (command_token == "G1" || command_token == "G0")                     // move command
         {
+            MoveCommandType type = MoveCommandType::Travel;
+
+            if (command_token == "G1")
+                type = MoveCommandType::Extrusion;
+
             if (!toolpath.empty())
             {
                 if (!toolpath.back().empty())
                 {
                     // initialized as previous command  
                     ParseMoveCommand(ss, cmd);
+                    cmd.setCommandType(type);
                     toolpath.back().back().push_back(std::make_shared<MoveCommand>(cmd));
                 }
             }

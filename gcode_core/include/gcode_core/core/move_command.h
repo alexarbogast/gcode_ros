@@ -6,6 +6,12 @@
 
 namespace gcode_core
 {
+enum class MoveCommandType
+{
+    None = 0,
+    Travel, Extrusion
+};
+
 class MoveCommand
 {
 public:
@@ -19,6 +25,9 @@ public:
         ss << "MoveCommand: {" << t.x() << ", " << t.y() << ", "<< t.z() << "}\n";
         return ss.str(); 
     }
+
+    void setCommandType(const MoveCommandType& type) { type_ = type; }
+    const MoveCommandType& getCommandType() const { return type_; }
 
     void setWaypoint(Eigen::Isometry3d waypoint) { waypoint_ = std::move(waypoint); }
     Eigen::Isometry3d& getWaypoint() { return waypoint_; }
@@ -46,6 +55,7 @@ public:
 
 private:
     Eigen::Isometry3d waypoint_{ Eigen::Isometry3d::Identity() };
+    MoveCommandType type_ = MoveCommandType::None;
 };
 
 inline std::ostream& operator<<(std::ostream&os, const MoveCommand& cmd)

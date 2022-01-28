@@ -12,7 +12,7 @@ using namespace gcode_core;
 
 int main()
 {
-    std::string filepath = "/home/alex/Downloads/CFFFP_square.gcode";
+    std::string filepath = "/home/alex/Documents/parts/cube_bottom.gcode";
 
     GcodeBase gcode;
     Marlin::ParseGcode(filepath, gcode);

@@ -10,10 +10,19 @@
 namespace gcode_core
 {
 
+enum class BeadType
+{
+    None,
+    WallInner, WallOuter, Skin, Fill
+};
+
 class Bead
 {
 public:
     Bead() = default;
+    Bead(const BeadType& type) 
+        : type_(type)
+    { }
 
     std::string to_string() const
     {
@@ -25,6 +34,9 @@ public:
 
         return ss.str();
     }
+
+    void setBeadType(const BeadType& type) { type_ = type; }
+    const BeadType& getBeadType() const { return type_; }
 
     void push_back(std::shared_ptr<MoveCommand>&& x) { segments_.push_back(x); }
     void push_back(std::shared_ptr<MoveCommand>& x) { segments_.push_back(x); }
@@ -40,6 +52,7 @@ public:
     GCODE_CORE_CONTAINER_FORWARD(std::shared_ptr<MoveCommand>, segments_)
 private:
     std::vector<std::shared_ptr<MoveCommand>> segments_;
+    BeadType type_ = BeadType::None;
 };
 
 inline std::ostream& operator<<(std::ostream& os, const Bead& bead)

@@ -9,6 +9,25 @@
 
 namespace gcode_rviz
 {
+static std::unordered_map<BeadType, std_msgs::ColorRGBA> BeadTypeColor(
+    {{BeadType::None,      WALL_OUTER_COLOR},
+     {BeadType::WallOuter, WALL_OUTER_COLOR},
+     {BeadType::WallInner, WALL_INNER_COLOR},
+     {BeadType::Skin,      SKIN_COLOR},
+     {BeadType::Fill,      FILL_COLOR}}
+);
+
+std_msgs::ColorRGBA create_color_rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a)
+{
+    std_msgs::ColorRGBA color;
+    
+    color.r = (float)r / 255;
+    color.g = (float)g  / 255;
+    color.b = (float)b  / 255;
+    color.a = (float)a  / 255;
+
+    return color;
+}
 
 GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
     : QWidget(parent)
@@ -70,7 +89,7 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
     // color method
     layer_color_ = QColor(221, 64, 58);
     color_method_ = new QComboBox();
-    color_method_->addItems({"random by layer", "random by bead", "uniform layers"});
+    color_method_->addItems({"bead type", "random by layer", "random by bead", "uniform layers"});
     pick_color_button_ = new QPushButton(tr("..."));
     pick_color_button_->setToolTip(tr("pick color"));
 
@@ -189,7 +208,7 @@ void GcodeVisualizationWidget::DisplayGcodeLayerRange()
         {
             std_msgs::ColorRGBA layer_color;
 
-            if (color_method == 2) // uniform layer
+            if (color_method == 3) // uniform layer
             {
                 layer_color.r = (double)layer_color_.red()    / 255;
                 layer_color.g = (double)layer_color_.green()  / 255;
@@ -202,7 +221,11 @@ void GcodeVisualizationWidget::DisplayGcodeLayerRange()
             for (auto bead : gcode_->toolpath()[layer_ind])
             {
                 std_msgs::ColorRGBA bead_color;
-                if (color_method == 1) // random by bead 
+                if (color_method == 0) // bead type 
+                {
+                    bead_color = BeadTypeColor[bead->getBeadType()];
+                }
+                else if (color_method == 2) // random by bead
                 {
                     bead_color = rvt_->createRandColor();
                 }
