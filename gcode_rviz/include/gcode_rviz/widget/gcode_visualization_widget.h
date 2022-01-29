@@ -6,6 +6,7 @@
 #include <QLineEdit>
 #include <QSlider>
 #include <QPushButton>
+#include <QCheckBox>
 
 #include <rviz_visual_tools/rviz_visual_tools.h>
 
@@ -54,6 +55,7 @@ protected:
     QComboBox* color_method_;
     QPushButton* pick_color_button_; 
     QColor layer_color_;
+    QCheckBox* hide_travel_;
 };
 
 } // namespace gcode_rviz

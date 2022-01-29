@@ -67,11 +67,19 @@ void ParseGcode(const std::string& filepath, GcodeBase& gcode_object)
 
         if (command_token.find(";LAYER:") != std::string::npos)                      // new layer
         {
-            toolpath.push_back(std::make_shared<Layer>());           
+            toolpath.push_back(std::make_shared<Layer>());
         }
         else if (command_token.find(";TYPE:") != std::string::npos)                  // new bead
         {
-            toolpath.back().push_back(std::make_shared<Bead>(ParseBeadType(command_token)));
+            if (!toolpath.back().empty())
+                if(!toolpath.back().back().empty())
+                    toolpath.back().back().pop_back();
+
+            std::shared_ptr<Bead> bead = std::make_shared<Bead>(ParseBeadType(command_token));
+            
+            // transfer previous travel move to this bead
+            bead->push_back(std::make_shared<MoveCommand>(cmd));
+            toolpath.back().push_back(bead);
         }
         else if (command_token == "G1" || command_token == "G0")                     // move command
         {
@@ -79,17 +87,14 @@ void ParseGcode(const std::string& filepath, GcodeBase& gcode_object)
 
             if (command_token == "G1")
                 type = MoveCommandType::Extrusion;
+            
+            // initialized as previous command  
+            ParseMoveCommand(ss, cmd);
+            cmd.setCommandType(type);
 
             if (!toolpath.empty())
-            {
                 if (!toolpath.back().empty())
-                {
-                    // initialized as previous command  
-                    ParseMoveCommand(ss, cmd);
-                    cmd.setCommandType(type);
                     toolpath.back().back().push_back(std::make_shared<MoveCommand>(cmd));
-                }
-            }
         }
     }
 }

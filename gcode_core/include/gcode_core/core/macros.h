@@ -35,6 +35,8 @@
                                                                                         \
     bool empty() const { return Container.empty(); }                                    \
     size_t size() const { return Container.size(); }                                    \
-
+                                                                                        \
+    void pop_back() { Container.pop_back(); }                                           \
+    void erase(iterator it) { Container.erase(it); }                                    \
 
 #endif // GCODE_CORE_MACROS_H

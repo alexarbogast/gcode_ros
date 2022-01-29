@@ -97,6 +97,14 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
     color_method_layout->addWidget(new QLabel(tr("color method: ")));
     color_method_layout->addWidget(color_method_);
     color_method_layout->addWidget(pick_color_button_);
+
+    // hide travel
+    hide_travel_ = new QCheckBox();
+    hide_travel_->setChecked(true);
+
+    QHBoxLayout* hide_travel_layout = new QHBoxLayout();
+    hide_travel_layout->addWidget(new QLabel(tr("hide travel: ")));
+    hide_travel_layout->addWidget(hide_travel_, 0, Qt::AlignRight);
     
     group_box_layout->addLayout(frame_layout);
     group_box_layout->addLayout(min_layer_bl);
@@ -105,6 +113,7 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
     group_box_layout->addLayout(line_width_layout);
     group_box_layout->addLayout(display_style_layout);
     group_box_layout->addLayout(color_method_layout);
+    group_box_layout->addLayout(hide_travel_layout);
 
     group_box_layout->setAlignment(Qt::AlignTop);
 
@@ -121,14 +130,12 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
     connect(min_layer_slider_, &QSlider::valueChanged, this, &GcodeVisualizationWidget::set_min_layer);
     connect(max_layer_slider_, &QSlider::valueChanged, this, &GcodeVisualizationWidget::set_max_layer);
 
-    connect(line_width_, qOverload<double>(&QDoubleSpinBox::valueChanged),
-            this, &GcodeVisualizationWidget::DisplayGcodeLayerRange);
-    connect(display_style_, qOverload<int>(&QComboBox::currentIndexChanged),
-            this, &GcodeVisualizationWidget::DisplayGcodeLayerRange);
-    connect(pick_color_button_, &QPushButton::clicked,
-            this, &GcodeVisualizationWidget::pick_color_click);   
-    connect(color_method_, qOverload<int>(&QComboBox::currentIndexChanged),
-            this, &GcodeVisualizationWidget::DisplayGcodeLayerRange);
+    connect(line_width_, qOverload<double>(&QDoubleSpinBox::valueChanged),this, &GcodeVisualizationWidget::DisplayGcodeLayerRange);
+    connect(display_style_, qOverload<int>(&QComboBox::currentIndexChanged),this, &GcodeVisualizationWidget::DisplayGcodeLayerRange);
+    connect(color_method_, qOverload<int>(&QComboBox::currentIndexChanged),this, &GcodeVisualizationWidget::DisplayGcodeLayerRange);
+    
+    connect(pick_color_button_, &QPushButton::clicked, this, &GcodeVisualizationWidget::pick_color_click);   
+    connect(hide_travel_, &QCheckBox::stateChanged, this, &GcodeVisualizationWidget::DisplayGcodeLayerRange);
 }
 
 GcodeVisualizationWidget::~GcodeVisualizationWidget() {}
@@ -200,14 +207,15 @@ void GcodeVisualizationWidget::DisplayGcodeLayerRange()
         int lower = min_layer_slider_->value();
         int upper = max_layer_slider_->value(); 
 
-        //  ========== color ===========
         int color_method = color_method_->currentIndex();
+        int display_style = display_style_->currentIndex();
+        bool hide_travel = hide_travel_->isChecked();
 
+        // ============ color ==============
         std::vector<std_msgs::ColorRGBA> colors;
         for (int layer_ind = lower; layer_ind <= upper; layer_ind++)
         {
             std_msgs::ColorRGBA layer_color;
-
             if (color_method == 3) // uniform layer
             {
                 layer_color.r = (double)layer_color_.red()    / 255;
@@ -218,23 +226,41 @@ void GcodeVisualizationWidget::DisplayGcodeLayerRange()
             else
                 layer_color = rvt_->createRandColor();
 
-            for (auto bead : gcode_->toolpath()[layer_ind])
+            for (const auto& bead : gcode_->toolpath()[layer_ind])
             {
                 std_msgs::ColorRGBA bead_color;
-                if (color_method == 0) // bead type 
-                {
-                    bead_color = BeadTypeColor[bead->getBeadType()];
-                }
-                else if (color_method == 2) // random by bead
-                {
-                    bead_color = rvt_->createRandColor();
-                }
-                else
-                    bead_color = layer_color;
 
-                for (auto cmd : *bead)
-                {   
-                    colors.push_back(bead_color);
+                switch (color_method)
+                {
+                    case 0: // bead type
+                        bead_color = BeadTypeColor[bead->getBeadType()];
+                        break;
+                    case 2: // random by bead
+                        bead_color = rvt_->createRandColor();
+                        break;
+                    default: // use layer color
+                       bead_color = layer_color;
+                }
+
+                if (display_style == 0) // lines
+                {
+                    for (auto it = ++bead->begin(); it != bead->end(); ++it)
+                    {
+                        if (hide_travel)
+                            bead_color.a = (*it)->getCommandType() == MoveCommandType::Travel ? 0 : 1;
+                        
+                        colors.push_back(bead_color);
+                    }
+                }
+                else if (display_style == 1) // cylinders
+                {
+                    for (const auto& cmd : *bead)
+                    {
+                        if (hide_travel)
+                            bead_color.a = cmd->getCommandType() == MoveCommandType::Travel ? 0 : 1;
+                        
+                        colors.push_back(bead_color);
+                    }
                 }
             }
         }
@@ -246,13 +272,11 @@ void GcodeVisualizationWidget::DisplayGcodeLayerRange()
         scale.y = line_width_mm;
         scale.z = line_width_mm;
 
-        int display_style = display_style_->currentIndex();
         if (display_style == 0) // lines
         {
             std::vector<geometry_msgs::Point> a_points, b_points;
             for (int layer_ind = lower; layer_ind <= upper; layer_ind++)
             {
-                std_msgs::ColorRGBA layer_color = rvt_->createRandColor();
                 for (auto bead : gcode_->toolpath()[layer_ind])
                 {
                     for (auto it = bead->begin(); it != --bead->end(); ++it)
