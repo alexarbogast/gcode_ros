@@ -9,9 +9,8 @@
   <author email="arbogastaw@gmail.com">Alex Arbogast</author>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_depend>roscpp</build_depend>
-  <build_export_depend>roscpp</build_export_depend>
-  <exec_depend>roscpp</exec_depend>
+  <depend>roscpp</depend>
+  <depend>roslib</depend>
 
   <export>
     <!-- Other tools can request additional information be placed here -->
