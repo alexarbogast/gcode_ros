@@ -1,4 +1,5 @@
 #include "gcode_core/flavor_impl/marlin_gcode.h"
+#include <iostream>
 
 namespace gcode_core
 {
@@ -89,12 +90,16 @@ void ParseGcode(const std::string& filepath, GcodeBase& gcode_object)
                 type = MoveCommandType::Extrusion;
             
             // initialized as previous command  
-            ParseMoveCommand(ss, cmd);
-            cmd.setCommandType(type);
+            MoveCommand new_cmd(cmd);
+            ParseMoveCommand(ss, new_cmd);
+            new_cmd.setCommandType(type);
 
-            if (!toolpath.empty())
-                if (!toolpath.back().empty())
-                    toolpath.back().back().push_back(std::make_shared<MoveCommand>(cmd));
+            if (!new_cmd.getWaypoint().isApprox(cmd.getWaypoint()))
+                if (!toolpath.empty())
+                    if (!toolpath.back().empty())
+                        toolpath.back().back().push_back(std::make_shared<MoveCommand>(new_cmd));
+
+            cmd = new_cmd;
         }
     }
 }
