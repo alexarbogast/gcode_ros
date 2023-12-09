@@ -2,17 +2,15 @@
 #define OPEN_GCODE_PANEL_H
 
 #include <rviz/panel.h>
-#include <rviz_visual_tools/rviz_visual_tools.h>
 
 #include <QLabel>
 #include <QPushButton>
 #include <QLineEdit>
 #include <QTextEdit>
 
-#include "gcode_rviz/widget/gcode_visualization_widget.h"
 #include "gcode_core/core/gcode.h"
+#include "gcode_rviz/widget/gcode_visualization_widget.h"
 
-using namespace gcode_core; 
 
 namespace gcode_rviz
 {
@@ -26,7 +24,6 @@ public:
 
     virtual void onInitialize() override;
     void DisplayToolpath() const;
-    // void SimplifyDouglasPeucker(EigenSTL::vector_Vector3d& path, double tolerance);
 
 private Q_SLOTS:
     void BrowseButtonClicked();
@@ -37,7 +34,7 @@ protected:
 
     GcodeVisualizationWidget* viz_widget_;
 
-    GcodeBasePtr gcode_;
+    gcode_core::ToolpathPtr toolpath_;
     rviz_visual_tools::RvizVisualToolsPtr rvt_;
 };
 

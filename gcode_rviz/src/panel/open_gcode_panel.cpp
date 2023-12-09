@@ -1,62 +1,67 @@
 #include <QBoxLayout>
 #include <QFileDialog>
 
-#include "gcode_core/flavor_impl/marlin_gcode.h"
+#include "gcode_core/core/interpreter.h"
 #include "gcode_rviz/panel/open_gcode_panel.h"
 
 namespace gcode_rviz
 {
-OpenGcodePanel::OpenGcodePanel(QWidget* parent) : rviz::Panel(parent) {}
+OpenGcodePanel::OpenGcodePanel(QWidget* parent) : rviz::Panel(parent)
+{
+}
 OpenGcodePanel::~OpenGcodePanel() = default;
 
 void OpenGcodePanel::onInitialize()
 {
-    // initialize rviz_visual_tools
-    rvt_.reset(new rviz_visual_tools::RvizVisualTools("world", "/rviz_visual_tools"));
-    rvt_->loadMarkerPub();
-    rvt_->enableBatchPublishing();
+  // initialize rviz_visual_tools
+  rvt_.reset(
+      new rviz_visual_tools::RvizVisualTools("world", "/rviz_visual_tools"));
+  rvt_->loadMarkerPub();
+  rvt_->enableBatchPublishing();
 
-    QVBoxLayout* main_layout = new QVBoxLayout();
-    setLayout(main_layout);
+  QVBoxLayout* main_layout = new QVBoxLayout();
+  setLayout(main_layout);
 
-    filepath_line_edit_ = new QLineEdit();
-    filepath_line_edit_->setPlaceholderText("gcode filepath");
+  filepath_line_edit_ = new QLineEdit();
+  filepath_line_edit_->setPlaceholderText("gcode filepath");
 
-    browse_button_ = new QPushButton();
-    browse_button_->setText(tr("..."));
-    browse_button_->setToolTip(tr("Load gcode file"));
-    connect(browse_button_, SIGNAL(clicked()), this, SLOT(BrowseButtonClicked()));
-    
-    viz_widget_ = new GcodeVisualizationWidget(this);
+  browse_button_ = new QPushButton();
+  browse_button_->setText(tr("..."));
+  browse_button_->setToolTip(tr("Load gcode file"));
+  connect(browse_button_, SIGNAL(clicked()), this, SLOT(BrowseButtonClicked()));
 
-    QHBoxLayout* file_layout = new QHBoxLayout();
-    file_layout->addWidget(filepath_line_edit_);
-    file_layout->addWidget(browse_button_);
+  viz_widget_ = new GcodeVisualizationWidget(this);
 
-    main_layout->addWidget(new QLabel("Gcode file:", nullptr));
-    main_layout->addLayout(file_layout);   
-    main_layout->addWidget(viz_widget_);
-    main_layout->addStretch();
+  QHBoxLayout* file_layout = new QHBoxLayout();
+  file_layout->addWidget(filepath_line_edit_);
+  file_layout->addWidget(browse_button_);
+
+  main_layout->addWidget(new QLabel("Gcode file:", nullptr));
+  main_layout->addLayout(file_layout);
+  main_layout->addWidget(viz_widget_);
+  main_layout->addStretch();
 }
 
 void OpenGcodePanel::BrowseButtonClicked()
 {
-    QString filepath = QFileDialog::getOpenFileName(this, "Open Gcode",
-        "/home/", "Image Files (*.gcode)");
+  QString filepath = QFileDialog::getOpenFileName(this, "Open Gcode", "/home/",
+                                                  "Image Files (*.gcode)");
 
-    if (!filepath.isEmpty())
-    {
-        filepath_line_edit_->setText(filepath);
-        std::string std_filepath = filepath.toStdString();
-        
-        gcode_ = std::make_shared<GcodeBase>();
-        Marlin::ParseGcode(std_filepath, *gcode_);
-        
-        viz_widget_->SetGcode(gcode_);
-    }
+  if (!filepath.isEmpty())
+  {
+    filepath_line_edit_->setText(filepath);
+    std::string std_filepath = filepath.toStdString();
+
+    toolpath_ = std::make_shared<gcode_core::Toolpath>();
+    std::shared_ptr<gcode_core::GcodeInterpreter> interpreter =
+        std::make_shared<gcode_core::GcodeInterpreter>();
+    interpreter->parseGcode(std_filepath, *toolpath_);
+
+    viz_widget_->SetToolpath(toolpath_);
+  }
 }
 
-} // namespace gcode_rviz
+}  // namespace gcode_rviz
 
 #include <class_loader/class_loader.hpp>
 

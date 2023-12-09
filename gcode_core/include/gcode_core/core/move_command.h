@@ -17,12 +17,6 @@ class MoveCommand
 public:
     MoveCommand() = default;
 
-    MoveCommand(const MoveCommand& other)
-    {
-        waypoint_ = other.getWaypoint();
-        type_ = other.getCommandType();
-    }
-
     std::string to_string() const
     {
         auto t = this->translation();
@@ -38,6 +32,9 @@ public:
     void setWaypoint(Eigen::Isometry3d waypoint) { waypoint_ = std::move(waypoint); }
     Eigen::Isometry3d& getWaypoint() { return waypoint_; }
     const Eigen::Isometry3d& getWaypoint() const { return waypoint_; };
+
+    void setTool(int tool) { tool_ = tool; }
+    int getTool() const { return tool_; }
 
     using ConstLinearPart = Eigen::Isometry3d::ConstLinearPart;
     using LinearPart = Eigen::Isometry3d::LinearPart;
@@ -65,6 +62,7 @@ public:
 private:
     Eigen::Isometry3d waypoint_{ Eigen::Isometry3d::Identity() };
     MoveCommandType type_ = MoveCommandType::None;
+    int tool_ = 0;
 };
 
 inline std::ostream& operator<<(std::ostream&os, const MoveCommand& cmd)

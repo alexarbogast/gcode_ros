@@ -61,10 +61,13 @@ include_directories(
 # gcode_visualization_widget
 qt_wrap_cpp(${PROJECT_NAME}_gcode_visualization_widget_cpp_MOCS
 	include/gcode_rviz/widget/gcode_visualization_widget.h
+	include/gcode_rviz/widget/layer_slider.h
 	include/gcode_rviz/widget/color_list_editor.h)
 
 add_library(${PROJECT_NAME}_gcode_visualization_widget SHARED
 	src/widget/gcode_visualization_widget.cpp
+	src/widget/layer_range_visualization.cpp
+	src/widget/layer_slider.cpp
 	src/widget/color_list_editor.cpp
 	${${PROJECT_NAME}_gcode_visualization_widget_cpp_MOCS})
 
