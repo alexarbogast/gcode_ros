@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
 <package format="2">
 	<name>gcode_ros</name>
-	<version>0.1.0</version>
+	<version>0.1.1</version>
 	<description>Metapackage for gcode_ros</description>
 	<maintainer email="arbogastaw@gmail.com">Alex Arbogast</maintainer>
-	<license>BSD</license>
+	<license>MIT</license>
 
 	<author>Alex Arbogast</author>
 	<buildtool_depend>catkin</buildtool_depend>
 
 	<exec_depend>gcode_core</exec_depend>
-    <exec_depend>gcode_rviz</exec_depend>
+  <exec_depend>gcode_rviz</exec_depend>
 
 	<export>
 		<metapackage/>

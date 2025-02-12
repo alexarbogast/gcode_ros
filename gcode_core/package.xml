@@ -5,7 +5,7 @@
   <description>The gcode_core package</description>
 
   <maintainer email="arbogastaw@gmail.com">Alex Arbogast</maintainer>
-  <license>BSD</license>
+  <license>MIT</license>
   <author email="arbogastaw@gmail.com">Alex Arbogast</author>
 
   <buildtool_depend>catkin</buildtool_depend>
