@@ -8,8 +8,6 @@
 #include <QCheckBox>
 #include <QComboBox>
 
-#include <rviz_visual_tools/rviz_visual_tools.h>
-
 #include <gcode_rviz/widget/layer_slider.h>
 #include <gcode_rviz/widget/layer_range_visualization.h>
 
@@ -24,8 +22,8 @@ public:
   GcodeVisualizationWidget(QWidget* parent = 0);
   virtual ~GcodeVisualizationWidget();
 
-  void SetToolpath(std::shared_ptr<Toolpath> toolpath);
-  void DisplayGcodeLayerRange();
+  void setToolpath(std::shared_ptr<Toolpath> toolpath);
+  void displayGcodeLayerRange(bool reset = false);
 
 protected Q_SLOTS:
   void set_gcode_frame();

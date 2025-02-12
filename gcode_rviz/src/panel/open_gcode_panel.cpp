@@ -11,12 +11,6 @@ OpenGcodePanel::~OpenGcodePanel() = default;
 
 void OpenGcodePanel::onInitialize()
 {
-  // initialize rviz_visual_tools
-  rvt_.reset(
-      new rviz_visual_tools::RvizVisualTools("world", "/rviz_visual_tools"));
-  rvt_->loadMarkerPub();
-  rvt_->enableBatchPublishing();
-
   QVBoxLayout* main_layout = new QVBoxLayout();
   setLayout(main_layout);
 
@@ -43,7 +37,7 @@ void OpenGcodePanel::onInitialize()
 void OpenGcodePanel::BrowseButtonClicked()
 {
   QString filepath = QFileDialog::getOpenFileName(this, "Open Gcode", "/home/",
-                                                  "Image Files (*.gcode)");
+                                                  "Gcode Files (*.gcode)");
 
   if (!filepath.isEmpty())
   {
@@ -55,7 +49,7 @@ void OpenGcodePanel::BrowseButtonClicked()
         std::make_shared<gcode_core::GcodeInterpreter>();
     interpreter->parseGcode(std_filepath, *toolpath_);
 
-    viz_widget_->SetToolpath(toolpath_);
+    viz_widget_->setToolpath(toolpath_);
   }
 }
 

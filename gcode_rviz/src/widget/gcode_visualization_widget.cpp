@@ -81,7 +81,7 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
   connect(gcode_frame_, &QLineEdit::editingFinished, this,
           &GcodeVisualizationWidget::set_gcode_frame);
   connect(layer_slider_, &LayerSliderWidget::valueChanged, this,
-          &GcodeVisualizationWidget::DisplayGcodeLayerRange);
+          [this]() { displayGcodeLayerRange(false); });
   connect(line_width_, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
           &GcodeVisualizationWidget::set_line_width);
   connect(display_style_, qOverload<int>(&QComboBox::currentIndexChanged), this,
@@ -100,26 +100,26 @@ GcodeVisualizationWidget::~GcodeVisualizationWidget() {}
 void GcodeVisualizationWidget::set_gcode_frame()
 {
   layer_range_vis_->setBaseFrame(gcode_frame_->text().toStdString());
-  DisplayGcodeLayerRange();
+  displayGcodeLayerRange(true);
 }
 
 void GcodeVisualizationWidget::set_line_width(double value)
 {
   layer_range_vis_->setLineWidth(value / 1000);
-  DisplayGcodeLayerRange();
+  displayGcodeLayerRange(true);
 }
 
 void GcodeVisualizationWidget::set_hide_travel(bool value)
 {
   layer_range_vis_->setHideTravel(value);
-  DisplayGcodeLayerRange();
+  displayGcodeLayerRange(true);
 }
 
 void GcodeVisualizationWidget::set_color_method()
 {
   auto method = static_cast<ColorMethod>(color_method_->currentIndex());
   layer_range_vis_->setColorMethod(method);
-  DisplayGcodeLayerRange();
+  displayGcodeLayerRange(true);
 }
 
 void GcodeVisualizationWidget::pick_color_click()
@@ -129,33 +129,32 @@ void GcodeVisualizationWidget::pick_color_click()
       create_color_rgba(layer_color_.red(), layer_color_.green(),
                         layer_color_.blue(), layer_color_.alpha()));
 
-  DisplayGcodeLayerRange();
+  displayGcodeLayerRange(true);
 }
 
 void GcodeVisualizationWidget::set_display_style(int value)
 {
   auto display_style = static_cast<DisplayStyle>(value);
   layer_range_vis_->setDisplayStyle(display_style);
-  DisplayGcodeLayerRange();
+  displayGcodeLayerRange(true);
 }
 
-void GcodeVisualizationWidget::SetToolpath(std::shared_ptr<Toolpath> toolpath)
+void GcodeVisualizationWidget::setToolpath(std::shared_ptr<Toolpath> toolpath)
 {
   layer_range_vis_->setLayers(toolpath->layers());
   int n_layers = layer_range_vis_->nLayers() - 1;
-  // layer_range_vis_->update(0, n_layers, true);
 
   layer_slider_->setRangeBounds(0, n_layers);
   layer_slider_->setLowerValue(0);
   layer_slider_->setUpperValue(n_layers);
 }
 
-void GcodeVisualizationWidget::DisplayGcodeLayerRange()
+void GcodeVisualizationWidget::displayGcodeLayerRange(bool reset)
 {
   int lower = layer_slider_->getLowerValue();
   int upper = layer_slider_->getUpperValue();
 
-  layer_range_vis_->update(lower, upper);
+  layer_range_vis_->update(lower, upper, reset);
 }
 
 }  // namespace gcode_rviz

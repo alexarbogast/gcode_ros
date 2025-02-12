@@ -4,11 +4,13 @@ project(gcode_rviz)
 find_package(catkin REQUIRED COMPONENTS
 	roscpp
 	rviz
-	pluginlib
+  tf2_eigen
+  tf2_ros
+  geometry_msgs
 	visualization_msgs
 	eigen_conversions
-	rviz_visual_tools
 	gcode_core
+	pluginlib
 )
 
 # Qt Stuff
@@ -43,10 +45,12 @@ catkin_package(
 		${PROJECT_NAME}_open_gcode_panel
 		roscpp
 		rviz
+    tf2_eigen
+    tf2_ros
 		pluginlib
+    geometry_msgs
 		visualization_msgs
 		eigen_conversion
-		rviz_visual_tools
 		gcode_core
 	DEPENDS
 		QT

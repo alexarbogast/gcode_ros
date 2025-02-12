@@ -33,7 +33,6 @@ protected:
   GcodeVisualizationWidget* viz_widget_;
 
   gcode_core::ToolpathPtr toolpath_;
-  rviz_visual_tools::RvizVisualToolsPtr rvt_;
 };
 
 }  // namespace gcode_rviz

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <ros/package.h>
 
-#include "gcode_core/core/interpreter.h"
+#include <gcode_core/core/interpreter.h>
 
 using namespace gcode_core;
 

@@ -11,11 +11,13 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
   <depend>rviz</depend>
-  <depend>pluginlib</depend>
+  <depend>tf2_eigen</depend>
+  <depend>tf2_ros</depend>
   <depend>visualization_msgs</depend>
+  <depend>geometry_msgs</depend>
   <depend>eigen_conversions</depend>
   <depend>gcode_core</depend>
-  <depend>rviz_visual_tools</depend>
+  <depend>pluginlib</depend>
 
   <export>
     <rviz plugin="${prefix}/gcode_rviz_test_plugin_description.xml"/>

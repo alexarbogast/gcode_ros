@@ -2,7 +2,6 @@
 #define COLOR_LIST_EDITOR_H
 
 #include <QComboBox>
-#include <rviz_visual_tools/rviz_visual_tools.h>
 
 namespace gcode_rviz
 {
