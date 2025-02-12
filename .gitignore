@@ -1,2 +1,4 @@
 # visual studio code artifacts
 *.vscode
+*.cache
+compile_commands.json

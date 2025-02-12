@@ -46,10 +46,10 @@ LayerSliderWidget::LayerSliderWidget(QWidget* parent)
   main_layout->addLayout(max_layer_bl);
   setLayout(main_layout);
 
-  connect(min_layer_slider_, &QSlider::valueChanged, this,
-          [this](int value) { model_->setMinValue(value); });
-  connect(max_layer_slider_, &QSlider::valueChanged, this,
-          [this](int value) { model_->setMaxValue(value); });
+  connect(min_layer_slider_, &QSlider::sliderReleased, this,
+          [this]() { model_->setMinValue(min_layer_slider_->value()); });
+  connect(max_layer_slider_, &QSlider::sliderReleased, this,
+          [this]() { model_->setMaxValue(max_layer_slider_->value()); });
   connect(min_layer_spinbox_, qOverload<int>(&QSpinBox::valueChanged), this,
           [this](int value) { model_->setMinValue(value); });
   connect(max_layer_spinbox_, qOverload<int>(&QSpinBox::valueChanged), this,

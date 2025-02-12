@@ -6,21 +6,28 @@
 
 namespace gcode_rviz
 {
+/**
+ * @class LayerRangeModel
+ * @brief A Qt-based model for managing a range with minimum and maximum values.
+ *
+ * This class provides an interface for setting and retrieving minimum and
+ * maximum values using QVariant.
+ *
+ * @signals
+ *   - void minValueChanged(QVariant& value): Emitted when the minimum value is
+ * updated.
+ *   - void maxValueChanged(QVariant& value): Emitted when the maximum value is
+ * updated.
+ */
 class LayerRangeModel : public QObject
 {
   Q_OBJECT
 public:
   void setMinValue(const QVariant& value);
-  inline const QVariant& getMinValue() const
-  {
-    return min_value_;
-  };
+  inline const QVariant& minValue() const { return min_value_; };
 
   void setMaxValue(const QVariant& value);
-  inline const QVariant& getMaxValue() const
-  {
-    return max_value_;
-  };
+  inline const QVariant& maxValue() const { return max_value_; };
 
 Q_SIGNALS:
   void minValueChanged(QVariant& value);
@@ -39,10 +46,10 @@ public:
   virtual ~LayerSliderWidget() = default;
 
   void setUpperValue(int value);
-  inline int getUpperValue() const { return model_->getMaxValue().toInt(); }
+  inline int getUpperValue() const { return model_->maxValue().toInt(); }
 
   void setLowerValue(int value);
-  inline int getLowerValue() const { return model_->getMinValue().toInt(); }
+  inline int getLowerValue() const { return model_->minValue().toInt(); }
 
   void setRangeBounds(int lower, int upper);
 

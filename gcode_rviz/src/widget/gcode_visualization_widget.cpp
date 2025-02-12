@@ -78,7 +78,7 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
 
   main_layout->addWidget(group_box);
 
-  connect(gcode_frame_, &QLineEdit::textChanged, this,
+  connect(gcode_frame_, &QLineEdit::editingFinished, this,
           &GcodeVisualizationWidget::set_gcode_frame);
   connect(layer_slider_, &LayerSliderWidget::valueChanged, this,
           &GcodeVisualizationWidget::DisplayGcodeLayerRange);
