@@ -8,36 +8,34 @@
 #include <QLineEdit>
 #include <QTextEdit>
 
-#include "gcode_core/core/gcode.h"
-#include "gcode_rviz/widget/gcode_visualization_widget.h"
-
+#include <gcode_rviz/widget/gcode_visualization_widget.h>
 
 namespace gcode_rviz
 {
 class OpenGcodePanel : public rviz::Panel
 {
-    Q_OBJECT
+  Q_OBJECT
 
 public:
-    OpenGcodePanel(QWidget* parent = nullptr);
-    ~OpenGcodePanel() override;
+  OpenGcodePanel(QWidget* parent = nullptr);
+  ~OpenGcodePanel() override;
 
-    virtual void onInitialize() override;
-    void DisplayToolpath() const;
+  virtual void onInitialize() override;
+  void DisplayToolpath() const;
 
 private Q_SLOTS:
-    void BrowseButtonClicked();
+  void BrowseButtonClicked();
 
 protected:
-    QPushButton* browse_button_;
-    QLineEdit* filepath_line_edit_;
+  QPushButton* browse_button_;
+  QLineEdit* filepath_line_edit_;
 
-    GcodeVisualizationWidget* viz_widget_;
+  GcodeVisualizationWidget* viz_widget_;
 
-    gcode_core::ToolpathPtr toolpath_;
-    rviz_visual_tools::RvizVisualToolsPtr rvt_;
+  gcode_core::ToolpathPtr toolpath_;
+  rviz_visual_tools::RvizVisualToolsPtr rvt_;
 };
 
-} //namespace gcode_rviz
+}  // namespace gcode_rviz
 
-#endif // OPEN_GCODE_PANEL_H
+#endif  // OPEN_GCODE_PANEL_H

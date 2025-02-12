@@ -1,14 +1,12 @@
 #include <QBoxLayout>
 #include <QFileDialog>
 
-#include "gcode_core/core/interpreter.h"
-#include "gcode_rviz/panel/open_gcode_panel.h"
+#include <gcode_core/core/interpreter.h>
+#include <gcode_rviz/panel/open_gcode_panel.h>
 
 namespace gcode_rviz
 {
-OpenGcodePanel::OpenGcodePanel(QWidget* parent) : rviz::Panel(parent)
-{
-}
+OpenGcodePanel::OpenGcodePanel(QWidget* parent) : rviz::Panel(parent) {}
 OpenGcodePanel::~OpenGcodePanel() = default;
 
 void OpenGcodePanel::onInitialize()

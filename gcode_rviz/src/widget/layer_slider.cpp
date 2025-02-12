@@ -1,6 +1,7 @@
+#include <gcode_rviz/widget/layer_slider.h>
+
 #include <QHBoxLayout>
 #include <QLabel>
-#include <gcode_rviz/widget/layer_slider.h>
 
 namespace gcode_rviz
 {
@@ -71,15 +72,9 @@ LayerSliderWidget::LayerSliderWidget(QWidget* parent)
           [this]() { Q_EMIT valueChanged(); });
 }
 
-void LayerSliderWidget::setUpperValue(int value)
-{
-  model_->setMaxValue(value);
-}
+void LayerSliderWidget::setUpperValue(int value) { model_->setMaxValue(value); }
 
-void LayerSliderWidget::setLowerValue(int value)
-{
-  model_->setMinValue(value);
-}
+void LayerSliderWidget::setLowerValue(int value) { model_->setMinValue(value); }
 
 void LayerSliderWidget::setRangeBounds(int lower, int upper)
 {

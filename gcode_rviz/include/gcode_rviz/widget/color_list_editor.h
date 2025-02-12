@@ -8,20 +8,20 @@ namespace gcode_rviz
 {
 class ColorListEditor : public QComboBox
 {
-Q_OBJECT
-Q_PROPERTY(QColor color READ color WRITE setColor USER true)
+  Q_OBJECT
+  Q_PROPERTY(QColor color READ color WRITE setColor USER true)
 
 public:
-    ColorListEditor(QWidget* widget = nullptr);
+  ColorListEditor(QWidget* widget = nullptr);
 
 public:
-    QColor color() const;
-    void setColor(const QColor& color);
+  QColor color() const;
+  void setColor(const QColor& color);
 
 private:
-    void populateList(); 
+  void populateList();
 };
 
-} // namespace gcode_rviz
+}  // namespace gcode_rviz
 
-#endif // COLOR_LIST_EDITOR_H
+#endif  // COLOR_LIST_EDITOR_H

@@ -1,9 +1,9 @@
+#include <gcode_rviz/widget/gcode_visualization_widget.h>
+
 #include <QGroupBox>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QColorDialog>
-
-#include "gcode_rviz/widget/gcode_visualization_widget.h"
 
 namespace gcode_rviz
 {
@@ -94,9 +94,7 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
           &GcodeVisualizationWidget::set_hide_travel);
 }
 
-GcodeVisualizationWidget::~GcodeVisualizationWidget()
-{
-}
+GcodeVisualizationWidget::~GcodeVisualizationWidget() {}
 
 // slots
 void GcodeVisualizationWidget::set_gcode_frame()

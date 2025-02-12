@@ -1,8 +1,6 @@
 #ifndef LAYER_RANGE_VISUALIZATION_H
 #define LAYER_RANGE_VISUALIZATION_H
 
-#include <unordered_map>
-
 #include <ros/callback_queue.h>
 #include <ros/ros.h>
 
@@ -47,14 +45,23 @@ public:
 
   void setLayers(const std::vector<gcode_core::ToolpathPtr>& layers);
   void setLayers(std::vector<gcode_core::ToolpathPtr>&& layers);
-  inline std::size_t nLayers() const {return layers_.size(); }
+  inline std::size_t nLayers() const { return layers_.size(); }
 
   inline void setLineWidth(double line_width) { line_width_ = line_width; }
   inline void setHideTravel(bool hide_travel) { hide_travel_ = hide_travel; }
   inline void setColor(const std_msgs::ColorRGBA& color) { color_ = color; }
-  inline void setColorMethod(const ColorMethod& method) { color_method_ = method; }
-  inline void setBaseFrame(const std::string& base_frame) { rvt_->setBaseFrame(base_frame); }
-  inline void setDisplayStyle(const DisplayStyle& style) {display_style_ = style; }
+  inline void setColorMethod(const ColorMethod& method)
+  {
+    color_method_ = method;
+  }
+  inline void setBaseFrame(const std::string& base_frame)
+  {
+    rvt_->setBaseFrame(base_frame);
+  }
+  inline void setDisplayStyle(const DisplayStyle& style)
+  {
+    display_style_ = style;
+  }
 
   void resetRandomColorMap();
 

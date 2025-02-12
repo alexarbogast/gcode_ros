@@ -1,5 +1,7 @@
+#include <gcode_rviz/widget/layer_range_visualization.h>
+
 #include <tf2_eigen/tf2_eigen.h>
-#include "gcode_rviz/widget/layer_range_visualization.h"
+#include <unordered_map>
 
 namespace gcode_rviz
 {
@@ -119,14 +121,13 @@ void LayerRangeVisualization::publishLayer(int layer)
 
   switch (display_style_)
   {
-  case DisplayStyle::Cylinders:
-    rvt_->publishPath(path, colors, line_width_);
-    break;
-  case DisplayStyle::Lines:
-  default:
-    break;
+    case DisplayStyle::Cylinders:
+      rvt_->publishPath(path, colors, line_width_);
+      break;
+    case DisplayStyle::Lines:
+    default:
+      break;
   }
-
 }
 
 void LayerRangeVisualization::getCommandColor(

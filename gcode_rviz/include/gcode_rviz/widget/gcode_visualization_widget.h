@@ -1,19 +1,17 @@
 #ifndef GCODE_VISUALIZATION_WIDGET_H
 #define GCODE_VISUALIZATION_WIDGET_H
 
-#include <unordered_map>
 #include <QSpinBox>
 #include <QLineEdit>
 #include <QSlider>
 #include <QPushButton>
 #include <QCheckBox>
+#include <QComboBox>
 
 #include <rviz_visual_tools/rviz_visual_tools.h>
 
-#include "gcode_core/core/gcode.h"
-#include "gcode_rviz/widget/color_list_editor.h"
-#include "gcode_rviz/widget/layer_slider.h"
-#include "gcode_rviz/widget/layer_range_visualization.h"
+#include <gcode_rviz/widget/layer_slider.h>
+#include <gcode_rviz/widget/layer_range_visualization.h>
 
 using namespace gcode_core;
 
