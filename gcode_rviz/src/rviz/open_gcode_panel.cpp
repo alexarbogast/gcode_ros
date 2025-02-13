@@ -1,8 +1,8 @@
+#include <gcode_rviz/rviz/open_gcode_panel.h>
+#include <gcode_core/core/interpreter.h>
+
 #include <QBoxLayout>
 #include <QFileDialog>
-
-#include <gcode_core/core/interpreter.h>
-#include <gcode_rviz/panel/open_gcode_panel.h>
 
 namespace gcode_rviz
 {
@@ -55,6 +55,5 @@ void OpenGcodePanel::BrowseButtonClicked()
 
 }  // namespace gcode_rviz
 
-#include <class_loader/class_loader.hpp>
-
-CLASS_LOADER_REGISTER_CLASS(gcode_rviz::OpenGcodePanel, rviz::Panel)
+#include <pluginlib/class_list_macros.hpp>
+PLUGINLIB_EXPORT_CLASS(gcode_rviz::OpenGcodePanel, rviz::Panel)

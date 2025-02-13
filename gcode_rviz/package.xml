@@ -20,6 +20,6 @@
   <depend>pluginlib</depend>
 
   <export>
-    <rviz plugin="${prefix}/gcode_rviz_test_plugin_description.xml"/>
+    <rviz plugin="${prefix}/gcode_rviz_plugin_description.xml"/>
   </export>
 </package>

@@ -88,27 +88,29 @@ target_include_directories(${PROJECT_NAME}_gcode_visualization_widget SYSTEM PUB
 	${QT_INCLUDE_DIR})
 
 # open_gcode_panel
-qt_wrap_cpp(${PROJECT_NAME}_open_gcode_panel_cpp_MOCS
-	include/gcode_rviz/panel/open_gcode_panel.h)
+qt_wrap_cpp(${PROJECT_NAME}_cpp_MOCS
+	include/gcode_rviz/rviz/open_gcode_panel.h
+  include/gcode_rviz/rviz/gcode_display.h)
 
-add_library(${PROJECT_NAME}_open_gcode_panel SHARED
-	src/panel/open_gcode_panel.cpp
-	${${PROJECT_NAME}_open_gcode_panel_cpp_MOCS})
+add_library(${PROJECT_NAME} SHARED
+	src/rviz/open_gcode_panel.cpp
+  src/rviz/gcode_display.cpp
+	${${PROJECT_NAME}_cpp_MOCS})
 
-target_link_libraries(${PROJECT_NAME}_open_gcode_panel PUBLIC
+target_link_libraries(${PROJECT_NAME} PUBLIC
 	${PROJECT_NAME}_gcode_visualization_widget
 	${catkin_LIBRARIES}
 	${QT_LIBRARIES})
 
-target_include_directories(${PROJECT_NAME}_open_gcode_panel PUBLIC
+target_include_directories(${PROJECT_NAME} PUBLIC
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     "$<INSTALL_INTERFACE:include>")
-target_include_directories(${PROJECT_NAME}_open_gcode_panel SYSTEM PUBLIC
+target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
 	${catkin_INCLUDE_DIRS}
 	${QT_INCLUDE_DIR})
 
 # Mark executables and/or libraries for installation
-install(TARGETS ${PROJECT_NAME}_open_gcode_panel
+install(TARGETS ${PROJECT_NAME}
 	ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 	RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
@@ -122,6 +124,6 @@ install(DIRECTORY include/${PROJECT_NAME}/
 )
 
 # Mark plugin XML files for installation
-install(FILES gcode_rviz_test_plugin_description.xml
+install(FILES gcode_rviz_plugin_description.xml
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
 )

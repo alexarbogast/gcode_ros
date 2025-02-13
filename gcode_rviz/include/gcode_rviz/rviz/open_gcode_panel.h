@@ -15,7 +15,6 @@ namespace gcode_rviz
 class OpenGcodePanel : public rviz::Panel
 {
   Q_OBJECT
-
 public:
   OpenGcodePanel(QWidget* parent = nullptr);
   ~OpenGcodePanel() override;
@@ -31,7 +30,6 @@ protected:
   QLineEdit* filepath_line_edit_;
 
   GcodeVisualizationWidget* viz_widget_;
-
   gcode_core::ToolpathPtr toolpath_;
 };
 
