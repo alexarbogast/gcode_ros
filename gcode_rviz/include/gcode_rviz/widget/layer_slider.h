@@ -1,74 +1,61 @@
 #ifndef LAYER_SLIDER_H
 #define LAYER_SLIDER_H
 
+#include <QLabel>
 #include <QSlider>
 #include <QSpinBox>
 
 namespace gcode_rviz
 {
-/**
- * @class LayerRangeModel
- * @brief A Qt-based model for managing a range with minimum and maximum values.
- *
- * This class provides an interface for setting and retrieving minimum and
- * maximum values using QVariant.
- *
- * @signals
- *   - void minValueChanged(QVariant& value): Emitted when the minimum value is
- * updated.
- *   - void maxValueChanged(QVariant& value): Emitted when the maximum value is
- * updated.
- */
-class LayerRangeModel : public QObject
-{
-  Q_OBJECT
-public:
-  void setMinValue(const QVariant& value);
-  inline const QVariant& minValue() const { return min_value_; };
-
-  void setMaxValue(const QVariant& value);
-  inline const QVariant& maxValue() const { return max_value_; };
-
-Q_SIGNALS:
-  void minValueChanged(QVariant& value);
-  void maxValueChanged(QVariant& value);
-
-private:
-  QVariant min_value_;
-  QVariant max_value_;
-};
-
 class LayerSliderWidget : public QWidget
 {
   Q_OBJECT
 public:
   LayerSliderWidget(QWidget* parent = 0);
-  virtual ~LayerSliderWidget() = default;
+
+  void setMinimum(int value);
+  void setMaximum(int value);
+  inline int minimum() const { return slider_->minimum(); };
+  inline int maximum() const { return slider_->maximum(); };
+
+  void setValue(int value);
+  inline int value() const { return slider_->value(); };
+
+  void setRange(int min, int max);
+  void setLabel(const QString& value);
+
+Q_SIGNALS:
+  void valueChanged(int value);
+  void editingFinished();
+
+private:
+  QLabel* label_;
+  QSlider* slider_;
+  QSpinBox* spinbox_;
+};
+
+class LayerRangeWidget : public QWidget
+{
+  Q_OBJECT
+public:
+  LayerRangeWidget(QWidget* parent = 0);
+  virtual ~LayerRangeWidget() = default;
 
   void setUpperValue(int value);
-  inline int getUpperValue() const { return model_->maxValue().toInt(); }
+  inline int getUpperValue() const { return max_layer_slider_->value(); }
 
   void setLowerValue(int value);
-  inline int getLowerValue() const { return model_->minValue().toInt(); }
+  inline int getLowerValue() const { return min_layer_slider_->value(); }
 
   void setRangeBounds(int lower, int upper);
 
 Q_SIGNALS:
   void valueChanged();
-
-private Q_SLOTS:
-  void onMinSpinboxChanged(const QVariant& value);
-  void onMaxSpinboxChanged(const QVariant& value);
-  void onMinSliderChanged(const QVariant& value);
-  void onMaxSliderChanged(const QVariant& value);
+  void editingFinished();
 
 private:
-  QSharedPointer<LayerRangeModel> model_;
-
-  QSlider* min_layer_slider_;
-  QSlider* max_layer_slider_;
-  QSpinBox* min_layer_spinbox_;
-  QSpinBox* max_layer_spinbox_;
+  LayerSliderWidget* min_layer_slider_;
+  LayerSliderWidget* max_layer_slider_;
 };
 
 }  // namespace gcode_rviz

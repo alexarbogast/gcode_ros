@@ -27,7 +27,16 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
   gcode_frame_ = new QLineEdit(tr("world"));
   frame_layout->addWidget(new QLabel(tr("frame: ")));
   frame_layout->addWidget(gcode_frame_);
-  layer_slider_ = new LayerSliderWidget();
+
+  // layer range
+  layer_range_ = new LayerRangeWidget(this);
+
+  // appearance label
+  QLabel* hline_label = new QLabel();
+  hline_label->setFrameStyle(QFrame::HLine | QFrame::Raised);
+  hline_label->setLineWidth(1);
+
+  QLabel* appearance_label = new QLabel(tr("Appearance:"));
 
   // line width layout
   QHBoxLayout* line_width_layout = new QHBoxLayout();
@@ -68,8 +77,9 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
   hide_travel_layout->addWidget(hide_travel_, 0, Qt::AlignRight);
 
   group_box_layout->addLayout(frame_layout);
-  group_box_layout->addWidget(layer_slider_);
-  group_box_layout->addWidget(new QLabel(tr("Apperance: ")));
+  group_box_layout->addWidget(layer_range_);
+  group_box_layout->addWidget(hline_label);
+  group_box_layout->addWidget(appearance_label);
   group_box_layout->addLayout(line_width_layout);
   group_box_layout->addLayout(display_style_layout);
   group_box_layout->addLayout(color_method_layout);
@@ -80,7 +90,7 @@ GcodeVisualizationWidget::GcodeVisualizationWidget(QWidget* parent)
 
   connect(gcode_frame_, &QLineEdit::editingFinished, this,
           &GcodeVisualizationWidget::set_gcode_frame);
-  connect(layer_slider_, &LayerSliderWidget::valueChanged, this,
+  connect(layer_range_, &LayerRangeWidget::editingFinished, this,
           [this]() { displayGcodeLayerRange(false); });
   connect(line_width_, qOverload<double>(&QDoubleSpinBox::valueChanged), this,
           &GcodeVisualizationWidget::set_line_width);
@@ -144,15 +154,17 @@ void GcodeVisualizationWidget::setToolpath(std::shared_ptr<Toolpath> toolpath)
   layer_range_vis_->setLayers(toolpath->layers());
   int n_layers = layer_range_vis_->nLayers() - 1;
 
-  layer_slider_->setRangeBounds(0, n_layers);
-  layer_slider_->setLowerValue(0);
-  layer_slider_->setUpperValue(n_layers);
+  layer_range_->setRangeBounds(0, n_layers);
+  layer_range_->setLowerValue(0);
+  layer_range_->setUpperValue(n_layers);
+
+  displayGcodeLayerRange(true);
 }
 
 void GcodeVisualizationWidget::displayGcodeLayerRange(bool reset)
 {
-  int lower = layer_slider_->getLowerValue();
-  int upper = layer_slider_->getUpperValue();
+  int lower = layer_range_->getLowerValue();
+  int upper = layer_range_->getUpperValue();
 
   layer_range_vis_->update(lower, upper, reset);
 }

@@ -37,7 +37,7 @@ protected:
   LayerRangeVisualizationPtr layer_range_vis_;
 
   QLineEdit* gcode_frame_;
-  LayerSliderWidget* layer_slider_;
+  LayerRangeWidget* layer_range_;
 
   QDoubleSpinBox* line_width_;
   QComboBox* display_style_;
