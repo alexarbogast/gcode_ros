@@ -1,4 +1,5 @@
 #include <gcode_rviz/rviz/gcode_display.h>
+#include <gcode_rviz/rviz/marker/toolpath.h>
 #include <gcode_core/core/conversions.h>
 
 #include <rviz/display_context.h>
@@ -10,6 +11,15 @@
 
 namespace gcode_rviz
 {
+struct DisplayStyle
+{
+  enum
+  {
+    LINES,
+    CYLINDERS
+  };
+};
+
 GcodeDisplay::GcodeDisplay() : rviz::Display(), tf_filter_(nullptr)
 {
   gcode_topic_property_ = new rviz::RosTopicProperty(
@@ -220,6 +230,31 @@ void GcodeDisplay::processMessage(const gcode_msgs::Toolpath::ConstPtr& message)
 void GcodeDisplay::processAdd(const gcode_msgs::Toolpath::ConstPtr& message)
 {
   ROS_INFO_STREAM("ADDING TOOLPATH" << message->id);
+
+  bool create = true;
+  ToolpathMarkerPtr marker;
+  M_IDToToolpathMarker::iterator it = markers_.find(message->id);
+  if (it != markers_.end())
+  {
+    marker = it->second;
+    // render
+    create = false;
+  }
+
+  if (create)
+  {
+    // marker.reset(createMarker)
+    if (marker)
+    {
+      markers_.insert(std::make_pair(message->id, marker));
+    }
+  }
+
+  if (marker)
+  {
+    marker->setMessage(message);
+    context_->queueRender();
+  }
 }
 
 void GcodeDisplay::processDelete(const gcode_msgs::Toolpath::ConstPtr& message)

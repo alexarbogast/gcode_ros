@@ -8,6 +8,7 @@
 
 #include <gcode_msgs/Toolpath.h>
 #include <rviz/display.h>
+#include <unordered_map>
 
 namespace rviz
 {
@@ -68,7 +69,7 @@ private Q_SLOTS:
   void updateDisplayStyle();
 
 private:
-  typedef std::map<int32_t, ToolpathMarkerPtr> M_IDToToolpathMarker;
+  typedef std::unordered_map<int32_t, ToolpathMarkerPtr> M_IDToToolpathMarker;
   typedef std::vector<gcode_msgs::Toolpath::ConstPtr> V_ToopathMessage;
 
   void clearMarkers();
@@ -88,12 +89,6 @@ private:
 
   message_filters::Subscriber<gcode_msgs::Toolpath> sub_;
   tf2_ros::MessageFilter<gcode_msgs::Toolpath>* tf_filter_;
-
-  enum DisplayStyle
-  {
-    LINES,
-    CYLINDERS
-  };
 };
 
 }  // namespace gcode_rviz
