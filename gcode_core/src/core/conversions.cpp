@@ -31,6 +31,7 @@ void toolpathToMsg(const Toolpath& toolpath, gcode_msgs::Toolpath& msg)
     moveToMsg(*cmd, move);
     msg.moves.emplace_back(std::move(move));
   }
+  msg.action = gcode_msgs::Toolpath::ADD;
 }
 
 }  // namespace gcode_core

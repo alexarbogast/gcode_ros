@@ -13,6 +13,9 @@ namespace rviz
 {
 class RosTopicProperty;
 class IntProperty;
+class FloatProperty;
+class EnumProperty;
+class TfFrameProperty;
 }  // namespace rviz
 
 namespace gcode_rviz
@@ -53,11 +56,16 @@ protected:
   virtual void unsubscribe();
 
   rviz::RosTopicProperty* gcode_topic_property_;
+  rviz::TfFrameProperty* frame_property_;
   rviz::IntProperty* queue_size_property_;
+  rviz::FloatProperty* line_width_property_;
+  rviz::EnumProperty* display_style_property_;
 
 private Q_SLOTS:
   void updateQueueSize();
   void updateTopic();
+  void updateLineWidth();
+  void updateDisplayStyle();
 
 private:
   typedef std::map<int32_t, ToolpathMarkerPtr> M_IDToToolpathMarker;
@@ -80,6 +88,12 @@ private:
 
   message_filters::Subscriber<gcode_msgs::Toolpath> sub_;
   tf2_ros::MessageFilter<gcode_msgs::Toolpath>* tf_filter_;
+
+  enum DisplayStyle
+  {
+    LINES,
+    CYLINDERS
+  };
 };
 
 }  // namespace gcode_rviz

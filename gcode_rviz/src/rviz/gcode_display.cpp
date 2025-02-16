@@ -4,17 +4,24 @@
 #include <rviz/display_context.h>
 #include <rviz/properties/ros_topic_property.h>
 #include <rviz/properties/int_property.h>
+#include <rviz/properties/float_property.h>
+#include <rviz/properties/enum_property.h>
+#include <rviz/properties/tf_frame_property.h>
 
 namespace gcode_rviz
 {
 GcodeDisplay::GcodeDisplay() : rviz::Display(), tf_filter_(nullptr)
 {
   gcode_topic_property_ = new rviz::RosTopicProperty(
-      "Gcode Topic", "visualization_gcode",
+      "Gcode Topic", "/visualization_gcode",
       QString::fromStdString(
           ros::message_traits::datatype<gcode_msgs::Toolpath>()),
       "gcode_msgs::Toolpath topic to subscribe to.", this,
       &GcodeDisplay::updateTopic);
+
+  frame_property_ = new rviz::TfFrameProperty(
+      "Reference Frame", rviz::TfFrameProperty::FIXED_FRAME_STRING,
+      "The base reference frame for the gcode.", this, nullptr, true);
 
   queue_size_property_ =
       new rviz::IntProperty("Queue Size", 100,
@@ -22,10 +29,22 @@ GcodeDisplay::GcodeDisplay() : rviz::Display(), tf_filter_(nullptr)
                             "message queue.",
                             this, &GcodeDisplay::updateQueueSize);
   queue_size_property_->setMin(0);
+
+  line_width_property_ = new rviz::FloatProperty(
+      "Line Width (mm)", 5.0, "The width of toolpath lines in millimeters",
+      this, &GcodeDisplay::updateLineWidth);
+
+  display_style_property_ =
+      new rviz::EnumProperty("Display Style", "Lines", "Gcode display style",
+                             this, &GcodeDisplay::updateDisplayStyle);
+  display_style_property_->addOption("Lines", DisplayStyle::LINES);
+  display_style_property_->addOption("Cylinders", DisplayStyle::CYLINDERS);
 }
 
 void GcodeDisplay::onInitialize()
 {
+  frame_property_->setFrameManager(context_->getFrameManager());
+
   tf_filter_ = new tf2_ros::MessageFilter<gcode_msgs::Toolpath>(
       *context_->getTF2BufferPtr(), fixed_frame_.toStdString(),
       queue_size_property_->getInt(), update_nh_);
@@ -72,6 +91,16 @@ void GcodeDisplay::updateTopic()
 {
   onDisable();
   onEnable();
+}
+
+void GcodeDisplay::updateLineWidth()
+{
+  // redraw gcode
+}
+
+void GcodeDisplay::updateDisplayStyle()
+{
+  // redraw gcode
 }
 
 void GcodeDisplay::subscribe()
