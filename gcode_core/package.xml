@@ -11,4 +11,5 @@
   <buildtool_depend>catkin</buildtool_depend>
   <depend>roscpp</depend>
   <depend>roslib</depend>
+  <depend>gcode_msgs</depend>
 </package>

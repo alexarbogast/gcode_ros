@@ -1,13 +1,17 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(gcode_core)
 
-find_package(catkin REQUIRED COMPONENTS roscpp roslib)
+find_package(catkin REQUIRED COMPONENTS
+  roscpp
+  roslib
+  gcode_msgs
+)
 find_package(Eigen3 REQUIRED)
 
 catkin_package(
     INCLUDE_DIRS include
     LIBRARIES ${PROJECT_NAME}
-    CATKIN_DEPENDS roscpp roslib
+    CATKIN_DEPENDS roscpp roslib gcode_msgs
 )
 
 include_directories(
@@ -15,9 +19,10 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME} 
+add_library(${PROJECT_NAME}
     src/core/gcode.cpp
     src/core/toolpath.cpp
+    src/core/conversions.cpp
     src/core/interpreter.cpp)
 target_link_libraries(${PROJECT_NAME} PUBLIC
     Eigen3::Eigen
