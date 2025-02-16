@@ -20,7 +20,6 @@ namespace gcode_rviz
 class ToolpathMarker;
 
 typedef boost::shared_ptr<ToolpathMarker> ToolpathMarkerPtr;
-typedef std::pair<std::string, int32_t> ToolpathID;
 
 class GcodeDisplay : public rviz::Display
 {
@@ -30,19 +29,22 @@ public:
   ~GcodeDisplay() override;
 
   void onInitialize() override;
+  void update(float wall_dt, float ros_dt) override;
+
+  void fixedFrameChanged() override;
   void reset() override;
 
-  void deleteToolpath(const ToolpathID& id);
+  void deleteToolpath(int32_t id);
   void deleteAllToolpaths();
 
-  void setToolpathStatus(const ToolpathID& id, rviz::StatusLevel level,
+  void setToolpathStatus(int32_t id, rviz::StatusLevel level,
                          const std::string& text);
-  void deleteToolpathStatus(const ToolpathID& id);
+  void deleteToolpathStatus(int32_t id);
 
   void setTopic(const QString& topic, const QString& datatype) override;
 
 protected:
-  void deleteToolpathInternal(const ToolpathID& id);
+  void deleteToolpathInternal(int32_t id);
 
   void onEnable() override;
   void onDisable() override;
@@ -54,17 +56,26 @@ protected:
   rviz::IntProperty* queue_size_property_;
 
 private Q_SLOTS:
-  void updateTopic();
   void updateQueueSize();
+  void updateTopic();
 
 private:
-  typedef std::map<ToolpathID, ToolpathMarkerPtr> M_IDToToolpathMarker;
+  typedef std::map<int32_t, ToolpathMarkerPtr> M_IDToToolpathMarker;
+  typedef std::vector<gcode_msgs::Toolpath::ConstPtr> V_ToopathMessage;
 
   void clearMarkers();
+
+  void processMessage(const gcode_msgs::Toolpath::ConstPtr& message);
+  void processAdd(const gcode_msgs::Toolpath::ConstPtr& message);
+  void processDelete(const gcode_msgs::Toolpath::ConstPtr& message);
+
   void incomingToolpath(const gcode_msgs::Toolpath::ConstPtr& toolpath);
+  void
+  failedToolpath(const ros::MessageEvent<gcode_msgs::Toolpath>& toolpath_evt,
+                 tf2_ros::FilterFailureReason reason);
 
   M_IDToToolpathMarker markers_;
-  std::vector<gcode_msgs::Toolpath::ConstPtr> message_queue_;
+  V_ToopathMessage message_queue_;
   boost::mutex queue_mutex_;
 
   message_filters::Subscriber<gcode_msgs::Toolpath> sub_;
