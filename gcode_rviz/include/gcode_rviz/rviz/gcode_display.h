@@ -8,7 +8,6 @@
 
 #include <gcode_msgs/Toolpath.h>
 #include <rviz/display.h>
-#include <unordered_map>
 
 namespace rviz
 {
@@ -69,7 +68,7 @@ private Q_SLOTS:
   void updateDisplayStyle();
 
 private:
-  typedef std::unordered_map<int32_t, ToolpathMarkerPtr> M_IDToToolpathMarker;
+  typedef std::map<int32_t, ToolpathMarkerPtr> M_IDToToolpathMarker;
   typedef std::vector<gcode_msgs::Toolpath::ConstPtr> V_ToopathMessage;
 
   void clearMarkers();
@@ -87,8 +86,7 @@ private:
   V_ToopathMessage message_queue_;
   boost::mutex queue_mutex_;
 
-  message_filters::Subscriber<gcode_msgs::Toolpath> sub_;
-  tf2_ros::MessageFilter<gcode_msgs::Toolpath>* tf_filter_;
+  ros::Subscriber toolpath_sub_;
 };
 
 }  // namespace gcode_rviz

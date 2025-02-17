@@ -1,6 +1,5 @@
 #include <gcode_rviz/rviz/gcode_display.h>
 #include <gcode_rviz/rviz/marker/toolpath.h>
-#include <gcode_core/core/conversions.h>
 
 #include <rviz/display_context.h>
 #include <rviz/properties/ros_topic_property.h>
@@ -20,7 +19,7 @@ struct DisplayStyle
   };
 };
 
-GcodeDisplay::GcodeDisplay() : rviz::Display(), tf_filter_(nullptr)
+GcodeDisplay::GcodeDisplay() : rviz::Display()
 {
   gcode_topic_property_ = new rviz::RosTopicProperty(
       "Gcode Topic", "/visualization_gcode",
@@ -54,17 +53,6 @@ GcodeDisplay::GcodeDisplay() : rviz::Display(), tf_filter_(nullptr)
 void GcodeDisplay::onInitialize()
 {
   frame_property_->setFrameManager(context_->getFrameManager());
-
-  tf_filter_ = new tf2_ros::MessageFilter<gcode_msgs::Toolpath>(
-      *context_->getTF2BufferPtr(), fixed_frame_.toStdString(),
-      queue_size_property_->getInt(), update_nh_);
-
-  tf_filter_->connectInput(sub_);
-  tf_filter_->registerCallback(boost::bind(&GcodeDisplay::incomingToolpath,
-                                           this, boost::placeholders::_1));
-  tf_filter_->registerFailureCallback(boost::bind(&GcodeDisplay::failedToolpath,
-                                                  this, boost::placeholders::_1,
-                                                  boost::placeholders::_2));
 }
 
 GcodeDisplay::~GcodeDisplay()
@@ -73,16 +61,10 @@ GcodeDisplay::~GcodeDisplay()
   {
     GcodeDisplay::unsubscribe();
     clearMarkers();
-    delete tf_filter_;
   }
 }
 
-void GcodeDisplay::clearMarkers()
-{
-  markers_.clear();
-  if (tf_filter_)  // also clear messages in pipeline
-    tf_filter_->clear();
-}
+void GcodeDisplay::clearMarkers() { markers_.clear(); }
 
 void GcodeDisplay::onEnable() { subscribe(); }
 void GcodeDisplay::onDisable()
@@ -91,11 +73,7 @@ void GcodeDisplay::onDisable()
   reset();
 }
 
-void GcodeDisplay::updateQueueSize()
-{
-  tf_filter_->setQueueSize((uint32_t)queue_size_property_->getInt());
-  subscribe();
-}
+void GcodeDisplay::updateQueueSize() { subscribe(); }
 
 void GcodeDisplay::updateTopic()
 {
@@ -126,10 +104,11 @@ void GcodeDisplay::subscribe()
     return;
   }
 
-  sub_.unsubscribe();
   try
   {
-    sub_.subscribe(update_nh_, gcode_topic, queue_size_property_->getInt());
+    toolpath_sub_ =
+        update_nh_.subscribe(gcode_topic, queue_size_property_->getInt(),
+                             &GcodeDisplay::incomingToolpath, this);
     setStatus(rviz::StatusProperty::Ok, "Topic", "OK");
   }
   catch (ros::Exception& e)
@@ -139,7 +118,7 @@ void GcodeDisplay::subscribe()
   }
 }
 
-void GcodeDisplay::unsubscribe() { sub_.unsubscribe(); }
+void GcodeDisplay::unsubscribe() { toolpath_sub_.shutdown(); }
 
 void GcodeDisplay::deleteToolpath(int32_t id)
 {
@@ -229,7 +208,7 @@ void GcodeDisplay::processMessage(const gcode_msgs::Toolpath::ConstPtr& message)
 
 void GcodeDisplay::processAdd(const gcode_msgs::Toolpath::ConstPtr& message)
 {
-  ROS_INFO_STREAM("ADDING TOOLPATH" << message->id);
+  ROS_INFO_STREAM("ADDING TOOLPATH " << message->id);
 
   bool create = true;
   ToolpathMarkerPtr marker;
@@ -237,13 +216,12 @@ void GcodeDisplay::processAdd(const gcode_msgs::Toolpath::ConstPtr& message)
   if (it != markers_.end())
   {
     marker = it->second;
-    // render
     create = false;
   }
 
   if (create)
   {
-    // marker.reset(createMarker)
+    marker.reset(new ToolpathMarker(this, context_, scene_node_));
     if (marker)
     {
       markers_.insert(std::make_pair(message->id, marker));
@@ -260,6 +238,8 @@ void GcodeDisplay::processAdd(const gcode_msgs::Toolpath::ConstPtr& message)
 void GcodeDisplay::processDelete(const gcode_msgs::Toolpath::ConstPtr& message)
 {
   ROS_INFO_STREAM("DELETING TOOLPATH" << message->id);
+  deleteToolpath(message->id);
+  context_->queueRender();
 }
 
 void GcodeDisplay::update(float /*wall_dt*/, float /*ros_dt*/)
@@ -283,11 +263,7 @@ void GcodeDisplay::update(float /*wall_dt*/, float /*ros_dt*/)
   }
 }
 
-void GcodeDisplay::fixedFrameChanged()
-{
-  tf_filter_->setTargetFrame(fixed_frame_.toStdString());
-  clearMarkers();
-}
+void GcodeDisplay::fixedFrameChanged() { clearMarkers(); }
 
 void GcodeDisplay::reset()
 {

@@ -46,7 +46,8 @@ void GcodeVisualizationWidget::setToolpath(
   {
     gcode_msgs::Toolpath::Ptr msg = boost::make_shared<gcode_msgs::Toolpath>();
     msg->id = i;
-    layers_msg.emplace_back(msg);
+    msg->header.frame_id  = "world";
+    layers_msg.emplace_back(std::move(msg));
     toolpathToMsg(*layers[i], *layers_msg.back());
   }
   layer_range_vis_->setLayers(layers_msg);

@@ -1,7 +1,6 @@
 #ifndef TOOLPATH_H_
 #define TOOLPATH_H_
 
-#include <OgreColourValue.h>
 #include <rviz/ogre_helpers/object.h>
 
 #include <OgreSceneNode.h>
@@ -25,7 +24,7 @@ public:
   virtual ~LineList() override;
 
   void setLines(const OgreLineList& lines,
-                const Ogre::ColourValue& colour = Ogre::ColourValue());
+                const Ogre::ColourValue& colour = Ogre::ColourValue::Green);
   void setLines(const OgreLineList& lines, const OgreColourList& colours);
 
   virtual void setPosition(const Ogre::Vector3& position) override;

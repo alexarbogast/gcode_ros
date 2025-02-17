@@ -14,16 +14,19 @@ LineList::LineList(Ogre::SceneManager* manager, Ogre::SceneNode* parent_node)
   {
     parent_node = scene_manager_->getRootSceneNode();
   }
-
+  manual_object_ = scene_manager_->createManualObject();
   scene_node_ = parent_node->createChildSceneNode();
 
   static int count = 0;
   std::stringstream ss;
   ss << "LineListMaterial" << count++;
+
   manual_object_material_ = Ogre::MaterialManager::getSingleton().create(
       ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   manual_object_material_->setReceiveShadows(false);
-  manual_object_material_->getTechnique(0)->setLightingEnabled(false);
+  manual_object_material_->getTechnique(0)->setLightingEnabled(true);
+  manual_object_material_->getTechnique(0)->getPass(0)->setDiffuse(0, 0, 0, 0);
+  manual_object_material_->getTechnique(0)->getPass(0)->setAmbient(1, 1, 1);
 
   scene_node_->attachObject(manual_object_);
 }

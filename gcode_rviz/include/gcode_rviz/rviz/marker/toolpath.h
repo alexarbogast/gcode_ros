@@ -34,8 +34,7 @@ public:
 
 protected:
   bool transform(const gcode_msgs::ToolpathConstPtr& message,
-                 Ogre::Vector3& pos, Ogre::Quaternion& orient,
-                 Ogre::Vector3& scale);
+                 Ogre::Vector3& pos, Ogre::Quaternion& orient);
   void onNewMessage(const gcode_msgs::ToolpathConstPtr& old_message,
                     const gcode_msgs::ToolpathConstPtr& new_message);
 
