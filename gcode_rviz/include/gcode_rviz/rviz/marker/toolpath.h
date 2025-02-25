@@ -25,6 +25,11 @@ public:
   void setMessage(const gcode_msgs::Toolpath& message);
   void setMessage(const gcode_msgs::ToolpathConstPtr& message);
 
+  inline const gcode_msgs::ToolpathConstPtr& getMessage() const
+  {
+    return message_;
+  }
+
   inline int32_t getID() { return message_->id; }
 
   virtual void setPosition(const Ogre::Vector3& position);

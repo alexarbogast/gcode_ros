@@ -74,6 +74,14 @@ void LayerRangeVisualization::setLayers(
   layers_ = std::move(layers);
 }
 
+void LayerRangeVisualization::reset()
+{
+  gcode_msgs::Toolpath delete_layers_msg;
+  delete_layers_msg.action = gcode_msgs::Toolpath::DELETEALL;
+  markers_pub_.publish(delete_layers_msg);
+  active_layers_.clear();
+}
+
 void LayerRangeVisualization::publishLayer(int layer)
 {
   markers_pub_.publish(layers_[layer]);

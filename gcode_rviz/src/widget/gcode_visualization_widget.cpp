@@ -1,6 +1,7 @@
 #include <gcode_msgs/Toolpath.h>
 #include <gcode_rviz/widget/gcode_visualization_widget.h>
 #include <gcode_core/core/conversions.h>
+#include <ros/duration.h>
 
 #include <QGroupBox>
 #include <QLabel>
@@ -40,15 +41,16 @@ GcodeVisualizationWidget::~GcodeVisualizationWidget() {}
 void GcodeVisualizationWidget::setToolpath(
     const gcode_core::ToolpathPtr& toolpath)
 {
-  std::vector<gcode_msgs::Toolpath::Ptr> layers_msg;
   std::vector<gcode_core::ToolpathPtr> layers = toolpath->layers();
+  std::vector<gcode_msgs::Toolpath::Ptr> layers_msg;
+  layers_msg.reserve(layers.size());
+
   for (std::size_t i = 0; i < layers.size(); ++i)
   {
-    gcode_msgs::Toolpath::Ptr msg = boost::make_shared<gcode_msgs::Toolpath>();
-    msg->id = i;
-    msg->header.frame_id  = "world";
-    layers_msg.emplace_back(std::move(msg));
-    toolpathToMsg(*layers[i], *layers_msg.back());
+    layers_msg.emplace_back(boost::make_shared<gcode_msgs::Toolpath>());
+    layers_msg[i]->id = i;
+    layers_msg[i]->header.frame_id = "world";
+    toolpathToMsg(*layers[i], *layers_msg[i]);
   }
   layer_range_vis_->setLayers(layers_msg);
   int n_layers = layer_range_vis_->nLayers() - 1;
@@ -57,6 +59,7 @@ void GcodeVisualizationWidget::setToolpath(
   layer_range_->setLowerValue(0);
   layer_range_->setUpperValue(n_layers);
 
+  layer_range_vis_->reset();
   displayGcodeLayerRange();
 }
 

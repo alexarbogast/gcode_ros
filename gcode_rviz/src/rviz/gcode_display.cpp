@@ -137,6 +137,8 @@ void GcodeDisplay::deleteToolpathInternal(int32_t id)
 
 void GcodeDisplay::deleteAllToolpaths()
 {
+  ROS_INFO("DELETING ALL TOOLPATHS");
+
   std::vector<int32_t> to_delete;
   M_IDToToolpathMarker::iterator marker_it = markers_.begin();
   for (; marker_it != markers_.end(); ++marker_it)
@@ -237,7 +239,7 @@ void GcodeDisplay::processAdd(const gcode_msgs::Toolpath::ConstPtr& message)
 
 void GcodeDisplay::processDelete(const gcode_msgs::Toolpath::ConstPtr& message)
 {
-  ROS_INFO_STREAM("DELETING TOOLPATH" << message->id);
+  ROS_INFO_STREAM("DELETING TOOLPATH " << message->id);
   deleteToolpath(message->id);
   context_->queueRender();
 }

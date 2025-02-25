@@ -40,6 +40,8 @@ public:
   void setLayers(std::vector<gcode_msgs::Toolpath::Ptr>&& layers);
   inline std::size_t nLayers() const { return layers_.size(); }
 
+  void reset();
+
 protected:
   void publishLayer(int layer);
   void removeLayer(int layer);

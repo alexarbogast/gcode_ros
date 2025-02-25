@@ -39,7 +39,7 @@ void ToolpathMarker::setMessage(const gcode_msgs::ToolpathConstPtr& message)
 }
 
 void ToolpathMarker::onNewMessage(
-    const gcode_msgs::ToolpathConstPtr& old_message,
+    const gcode_msgs::ToolpathConstPtr& /*old_message*/,
     const gcode_msgs::ToolpathConstPtr& new_message)
 {
   if (!line_list_)
@@ -61,7 +61,8 @@ void ToolpathMarker::onNewMessage(
   setPosition(pos);
   setOrientation(orient);
 
-  OgreLineList lines(new_message->moves.size() - 1);
+  OgreLineList lines;
+  lines.reserve(new_message->moves.size() - 1);
   for (std::size_t i = 1; i < new_message->moves.size(); ++i)
   {
     const geometry_msgs::Point& p_start =

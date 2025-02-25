@@ -25,8 +25,7 @@ LineList::LineList(Ogre::SceneManager* manager, Ogre::SceneNode* parent_node)
       ss.str(), Ogre::ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME);
   manual_object_material_->setReceiveShadows(false);
   manual_object_material_->getTechnique(0)->setLightingEnabled(true);
-  manual_object_material_->getTechnique(0)->getPass(0)->setDiffuse(0, 0, 0, 0);
-  manual_object_material_->getTechnique(0)->getPass(0)->setAmbient(1, 1, 1);
+  setColor(Ogre::ColourValue(0.973, 0.094, 0.580));
 
   scene_node_->attachObject(manual_object_);
 }
