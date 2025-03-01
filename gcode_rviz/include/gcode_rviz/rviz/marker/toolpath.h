@@ -1,6 +1,7 @@
 #ifndef RVIZ_GCODE_TOOLPATH_H
 #define RVIZ_GCODE_TOOLPATH_H
 
+#include <gcode_msgs/Move.h>
 #include <gcode_msgs/Toolpath.h>
 #include <OgrePrerequisites.h>
 
@@ -12,7 +13,6 @@ class DisplayContext;
 namespace gcode_rviz
 {
 class GcodeDisplay;
-class LineList;
 
 class ToolpathMarker
 {
@@ -30,6 +30,8 @@ public:
     return message_;
   }
 
+  void redraw();
+
   inline int32_t getID() { return message_->id; }
 
   virtual void setPosition(const Ogre::Vector3& position);
@@ -40,15 +42,19 @@ public:
 protected:
   bool transform(const gcode_msgs::ToolpathConstPtr& message,
                  Ogre::Vector3& pos, Ogre::Quaternion& orient);
-  void onNewMessage(const gcode_msgs::ToolpathConstPtr& old_message,
-                    const gcode_msgs::ToolpathConstPtr& new_message);
+
+  void getLayerColor(Ogre::ColourValue& color) const;
+  void getMoveColor(const gcode_msgs::Move& move,
+                    Ogre::ColourValue& color) const;
 
   GcodeDisplay* owner_;
   rviz::DisplayContext* context_;
   Ogre::SceneNode* scene_node_;
 
   gcode_msgs::ToolpathConstPtr message_;
-  LineList* line_list_;
+
+  Ogre::ManualObject* manual_object_;
+  size_t n_lines_ = 0;
 };
 typedef boost::shared_ptr<ToolpathMarker> ToopathMarkerPtr;
 

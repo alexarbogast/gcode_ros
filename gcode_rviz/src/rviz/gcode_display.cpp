@@ -6,18 +6,9 @@
 #include <rviz/properties/int_property.h>
 #include <rviz/properties/float_property.h>
 #include <rviz/properties/enum_property.h>
-#include <rviz/properties/tf_frame_property.h>
 
 namespace gcode_rviz
 {
-struct DisplayStyle
-{
-  enum
-  {
-    LINES,
-    CYLINDERS
-  };
-};
 
 GcodeDisplay::GcodeDisplay() : rviz::Display()
 {
@@ -39,15 +30,22 @@ GcodeDisplay::GcodeDisplay() : rviz::Display()
                             this, &GcodeDisplay::updateQueueSize);
   queue_size_property_->setMin(0);
 
-  line_width_property_ = new rviz::FloatProperty(
-      "Line Width (mm)", 5.0, "The width of toolpath lines in millimeters",
-      this, &GcodeDisplay::updateLineWidth);
+  line_width_property_ = new rviz::FloatProperty("Line Width (mm)", 5.0,
+                                                 "The width of toolpath lines",
+                                                 this, &GcodeDisplay::redraw);
 
   display_style_property_ =
       new rviz::EnumProperty("Display Style", "Lines", "Gcode display style",
-                             this, &GcodeDisplay::updateDisplayStyle);
+                             this, &GcodeDisplay::redraw);
   display_style_property_->addOption("Lines", DisplayStyle::LINES);
   display_style_property_->addOption("Cylinders", DisplayStyle::CYLINDERS);
+
+  color_method_property_ =
+      new rviz::EnumProperty("Color Method", "ByTool", "Gcode color method",
+                             this, &GcodeDisplay::redraw);
+  color_method_property_->addOption("ByTool", ColorMethod::BY_TOOL);
+  color_method_property_->addOption("RandomByLayer", ColorMethod::RANDOM_BY_LAYER);
+  color_method_property_->addOption("UniformLayers", ColorMethod::UNIFORM_LAYERS);
 }
 
 void GcodeDisplay::onInitialize()
@@ -65,6 +63,14 @@ GcodeDisplay::~GcodeDisplay()
 }
 
 void GcodeDisplay::clearMarkers() { markers_.clear(); }
+
+void GcodeDisplay::redraw()
+{
+  for (auto& toolpath : markers_)
+  {
+    toolpath.second->redraw();
+  }
+}
 
 void GcodeDisplay::onEnable() { subscribe(); }
 void GcodeDisplay::onDisable()
@@ -87,6 +93,11 @@ void GcodeDisplay::updateLineWidth()
 }
 
 void GcodeDisplay::updateDisplayStyle()
+{
+  // redraw gcode
+}
+
+void GcodeDisplay::updateColorMethod()
 {
   // redraw gcode
 }
@@ -211,6 +222,8 @@ void GcodeDisplay::processMessage(const gcode_msgs::Toolpath::ConstPtr& message)
 void GcodeDisplay::processAdd(const gcode_msgs::Toolpath::ConstPtr& message)
 {
   ROS_INFO_STREAM("ADDING TOOLPATH " << message->id);
+
+  DisplayStyle style = (DisplayStyle)display_style_property_->getOptionInt();
 
   bool create = true;
   ToolpathMarkerPtr marker;

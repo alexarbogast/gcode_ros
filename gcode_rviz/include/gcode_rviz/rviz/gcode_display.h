@@ -3,11 +3,17 @@
 
 #ifndef Q_MOC_RUN
 #include <tf2_ros/message_filter.h>
-#include <message_filters/subscriber.h>
 #endif
 
 #include <gcode_msgs/Toolpath.h>
+
 #include <rviz/display.h>
+#include <rviz/properties/tf_frame_property.h>
+
+namespace Ogre
+{
+class ManualObject;
+}
 
 namespace rviz
 {
@@ -60,18 +66,21 @@ protected:
   rviz::IntProperty* queue_size_property_;
   rviz::FloatProperty* line_width_property_;
   rviz::EnumProperty* display_style_property_;
+  rviz::EnumProperty* color_method_property_;
 
 private Q_SLOTS:
   void updateQueueSize();
   void updateTopic();
   void updateLineWidth();
   void updateDisplayStyle();
+  void updateColorMethod();
 
 private:
   typedef std::map<int32_t, ToolpathMarkerPtr> M_IDToToolpathMarker;
   typedef std::vector<gcode_msgs::Toolpath::ConstPtr> V_ToopathMessage;
 
   void clearMarkers();
+  void redraw();
 
   void processMessage(const gcode_msgs::Toolpath::ConstPtr& message);
   void processAdd(const gcode_msgs::Toolpath::ConstPtr& message);
@@ -87,6 +96,21 @@ private:
   boost::mutex queue_mutex_;
 
   ros::Subscriber toolpath_sub_;
+
+  enum DisplayStyle
+  {
+    LINES,
+    CYLINDERS
+  };
+
+  enum ColorMethod
+  {
+    BY_TOOL,
+    RANDOM_BY_LAYER,
+    UNIFORM_LAYERS
+  };
+
+  friend class ToolpathMarker;
 };
 
 }  // namespace gcode_rviz
