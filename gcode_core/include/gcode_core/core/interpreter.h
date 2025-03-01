@@ -18,7 +18,8 @@ public:
 protected:
   virtual void parseLine(std::stringstream& ss, Toolpath& toolpath);
   MoveCommand move_command_;
-  double previous_extruder_;
+  double previous_extruder_ = 0.0;
+  bool absolute_extrusion_ = true;
 
 private:
   virtual void parseMoveCommand(std::stringstream& ss, MoveCommand& cmd);

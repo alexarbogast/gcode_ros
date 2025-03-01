@@ -1,5 +1,6 @@
 #include "gcode_core/core/interpreter.h"
 #include <fstream>
+#include "gcode_core/core/move_command.h"
 
 namespace gcode_core
 {
@@ -7,9 +8,6 @@ void GcodeInterpreter::parseGcode(const std::string& filepath,
                                   Toolpath& toolpath)
 {
   std::ifstream filein(filepath, std::ios::in);
-  move_command_ = MoveCommand();
-  previous_extruder_ = 0.0;
-
   for (std::string line; std::getline(filein, line);)
   {
     std::stringstream ss(line);
@@ -21,28 +19,40 @@ void GcodeInterpreter::parseLine(std::stringstream& ss, Toolpath& toolpath)
 {
   std::string command_token;
   ss >> command_token;
-
-  if (command_token == "G1" || command_token == "G0")
+  switch (command_token[0])
   {
+    case 'G':
+      if (command_token == "G1" || command_token == "G0")
+      {
+        MoveCommand old_cmd = move_command_;
+        parseMoveCommand(ss, move_command_);
 
-    MoveCommand old_cmd = move_command_; 
-    parseMoveCommand(ss, move_command_);
-
-    // only add move commands with non-zero travel
-    double d = (old_cmd.translation() - move_command_.translation()).norm();
-    if (d)
-    {
-      toolpath.push_back(std::make_shared<MoveCommand>(move_command_));
-    }
-  }
-  else if (command_token == "G92")
-  {
-    parseMoveCommand(ss, move_command_);
-  }
-  else if (command_token[0] == 'T')
-  {
-    std::string tool = command_token.substr(1, command_token.size());
-    move_command_.setTool(std::stoi(tool));
+        // only add move commands with non-zero travel
+        double d = (old_cmd.translation() - move_command_.translation()).norm();
+        if (d)
+        {
+          toolpath.push_back(std::make_shared<MoveCommand>(move_command_));
+        }
+      }
+      else if (command_token == "G92")
+      {
+        parseMoveCommand(ss, move_command_);
+      }
+      break;
+    case 'M':
+      if (command_token == "M82")
+      {
+        absolute_extrusion_ = true;
+      }
+      else if (command_token == "M83")
+      {
+        absolute_extrusion_ = false;
+      }
+      break;
+    case 'T':
+      std::string tool = command_token.substr(1, command_token.size());
+      move_command_.setTool(std::stoi(tool));
+      break;
   }
 }
 
@@ -68,7 +78,7 @@ void GcodeInterpreter::parseMoveCommand(std::stringstream& ss, MoveCommand& cmd)
         break;
       case 'E': {
         double ext = std::stod(token.substr(1));
-        if (ext - previous_extruder_ > 0.0)
+        if (!absolute_extrusion_ || ext - previous_extruder_ > 0.0)
         {
           cmd.setCommandType(MoveCommandType::Extrusion);
         }
