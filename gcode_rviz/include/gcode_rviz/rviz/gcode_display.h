@@ -8,7 +8,6 @@
 #include <gcode_msgs/Toolpath.h>
 
 #include <rviz/display.h>
-#include <rviz/properties/tf_frame_property.h>
 
 namespace Ogre
 {
@@ -22,6 +21,7 @@ class IntProperty;
 class FloatProperty;
 class EnumProperty;
 class TfFrameProperty;
+class ColorProperty;
 }  // namespace rviz
 
 namespace gcode_rviz
@@ -67,6 +67,7 @@ protected:
   rviz::FloatProperty* line_width_property_;
   rviz::EnumProperty* display_style_property_;
   rviz::EnumProperty* color_method_property_;
+  rviz::ColorProperty* layer_color_property_;
 
 private Q_SLOTS:
   void updateQueueSize();

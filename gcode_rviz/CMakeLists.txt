@@ -97,7 +97,7 @@ add_library(${PROJECT_NAME} SHARED
   src/rviz/open_gcode_panel.cpp
   src/rviz/gcode_display.cpp
   src/rviz/marker/toolpath.cpp
-  src/rviz/ogre_helpers/line_list.cpp
+  src/rviz/color.cpp
   ${${PROJECT_NAME}_cpp_MOCS}
 )
 

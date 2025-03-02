@@ -1,12 +1,11 @@
 #include <gcode_rviz/rviz/marker/toolpath.h>
 #include <gcode_rviz/rviz/gcode_display.h>
+#include <gcode_rviz/rviz/color.h>
 #include <rviz/display_context.h>
 
-#include <unordered_map>
-
-// #include <gcode_rviz/rviz/ogre_helpers/line_list.h>
-
 #include <rviz/properties/enum_property.h>
+#include <rviz/properties/tf_frame_property.h>
+#include <rviz/properties/color_property.h>
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
@@ -14,21 +13,6 @@
 
 namespace gcode_rviz
 {
-const Ogre::ColourValue CARBON = Ogre::ColourValue(0.2, 0.2, 0.2, 1.0);
-const Ogre::ColourValue FRIENDLY_FOX = Ogre::ColourValue(0.87, 0.36, 0.12, 1.0);
-const Ogre::ColourValue GREEN_BLUE = Ogre::ColourValue(0.23, 0.72, 0.58, 1.0);
-const Ogre::ColourValue BROCADE = Ogre::ColourValue(0.55, 0.52, 0.76, 1.0);
-const Ogre::ColourValue MELTED_BUTTER = Ogre::ColourValue(1.0, 0.81, 0.34, 1.0);
-const Ogre::ColourValue GUNMETAL = Ogre::ColourValue(0.14, 0.18, 0.25, 1.0);
-const Ogre::ColourValue SATIN_GOLD = Ogre::ColourValue(0.8, 0.64, 0.23, 1.0);
-const Ogre::ColourValue TOMATO = Ogre::ColourValue(0.98, 0.34, 0.22, 1.0);
-const Ogre::ColourValue KELLY_GREEN = Ogre::ColourValue(0.26, 0.73, 0.16, 1.0);
-
-static std::unordered_map<int, Ogre::ColourValue> ToolColor = {
-  { 0, FRIENDLY_FOX }, { 1, GREEN_BLUE }, { 2, BROCADE }, { 3, MELTED_BUTTER },
-  { 4, GUNMETAL },     { 5, SATIN_GOLD }, { 6, TOMATO },  { 7, KELLY_GREEN }
-};
-
 ToolpathMarker::ToolpathMarker(GcodeDisplay* owner,
                                rviz::DisplayContext* context,
                                Ogre::SceneNode* parent_node)
@@ -104,7 +88,7 @@ void ToolpathMarker::setMessage(const gcode_msgs::ToolpathConstPtr& message)
 
 void ToolpathMarker::getLayerColor(Ogre::ColourValue& color) const
 {
-  color = CARBON;
+  color = ColorPalette::CARBON;
   GcodeDisplay::ColorMethod color_method =
       GcodeDisplay::ColorMethod(owner_->color_method_property_->getOptionInt());
   switch (color_method)
@@ -116,7 +100,7 @@ void ToolpathMarker::getLayerColor(Ogre::ColourValue& color) const
       );
       break;
     case GcodeDisplay::ColorMethod::UNIFORM_LAYERS:
-      color = FRIENDLY_FOX;
+      color = rviz::qtToOgre(owner_->layer_color_property_->getColor());
       break;
     default:
       break;
@@ -128,7 +112,7 @@ void ToolpathMarker::getMoveColor(const gcode_msgs::Move& move,
 {
   if (move.type == gcode_msgs::Move::TRAVEL)
   {
-    color = CARBON;
+    color = ColorPalette::CARBON;
     return;
   }
 
@@ -137,7 +121,7 @@ void ToolpathMarker::getMoveColor(const gcode_msgs::Move& move,
   switch (color_method)
   {
     case GcodeDisplay::ColorMethod::BY_TOOL:
-      color = ToolColor[move.tool % ToolColor.size()];
+      color = ColorPalette::getColor(move.tool);
       break;
     default:
       break;

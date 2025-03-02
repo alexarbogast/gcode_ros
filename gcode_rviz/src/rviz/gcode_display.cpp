@@ -1,11 +1,15 @@
 #include <gcode_rviz/rviz/gcode_display.h>
 #include <gcode_rviz/rviz/marker/toolpath.h>
+#include <gcode_rviz/rviz/color.h>
 
+#include <qnamespace.h>
 #include <rviz/display_context.h>
 #include <rviz/properties/ros_topic_property.h>
 #include <rviz/properties/int_property.h>
 #include <rviz/properties/float_property.h>
 #include <rviz/properties/enum_property.h>
+#include <rviz/properties/tf_frame_property.h>
+#include <rviz/properties/color_property.h>
 
 namespace gcode_rviz
 {
@@ -44,8 +48,15 @@ GcodeDisplay::GcodeDisplay() : rviz::Display()
       new rviz::EnumProperty("Color Method", "ByTool", "Gcode color method",
                              this, &GcodeDisplay::redraw);
   color_method_property_->addOption("ByTool", ColorMethod::BY_TOOL);
-  color_method_property_->addOption("RandomByLayer", ColorMethod::RANDOM_BY_LAYER);
-  color_method_property_->addOption("UniformLayers", ColorMethod::UNIFORM_LAYERS);
+  color_method_property_->addOption("RandomByLayer",
+                                    ColorMethod::RANDOM_BY_LAYER);
+  color_method_property_->addOption("UniformLayers",
+                                    ColorMethod::UNIFORM_LAYERS);
+
+  layer_color_property_ = new rviz::ColorProperty("Layer Color", Qt::blue,
+                                                  "The color of the gcode "
+                                                  "layers",
+                                                  this, &GcodeDisplay::redraw);
 }
 
 void GcodeDisplay::onInitialize()
