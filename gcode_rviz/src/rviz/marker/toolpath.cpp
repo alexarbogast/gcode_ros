@@ -1,11 +1,8 @@
-#include <gcode_rviz/rviz/marker/toolpath.h>
 #include <gcode_rviz/rviz/gcode_display.h>
+#include <gcode_rviz/rviz/marker/toolpath.h>
 #include <gcode_rviz/rviz/color.h>
-#include <rviz/display_context.h>
 
-#include <rviz/properties/enum_property.h>
-#include <rviz/properties/tf_frame_property.h>
-#include <rviz/properties/color_property.h>
+#include <rviz/display_context.h>
 
 #include <OgreSceneNode.h>
 #include <OgreSceneManager.h>
@@ -73,6 +70,12 @@ void ToolpathMarker::setMessage(const gcode_msgs::ToolpathConstPtr& message)
   {
     const geometry_msgs::Point& p_start = message_->moves[i].pose.position;
     const geometry_msgs::Point& p_end = message->moves[i + 1].pose.position;
+
+    if (message->moves[i + 1].type == gcode_msgs::Move::TRAVEL)
+    {
+      if (owner_->hide_travel_property_->getBool())
+        continue;
+    }
 
     Ogre::ColourValue move_color = layer_color;
     getMoveColor(message->moves[i + 1], move_color);

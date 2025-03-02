@@ -2,14 +2,10 @@
 #include <gcode_rviz/rviz/marker/toolpath.h>
 #include <gcode_rviz/rviz/color.h>
 
-#include <qnamespace.h>
 #include <rviz/display_context.h>
 #include <rviz/properties/ros_topic_property.h>
 #include <rviz/properties/int_property.h>
 #include <rviz/properties/float_property.h>
-#include <rviz/properties/enum_property.h>
-#include <rviz/properties/tf_frame_property.h>
-#include <rviz/properties/color_property.h>
 
 namespace gcode_rviz
 {
@@ -36,6 +32,11 @@ GcodeDisplay::GcodeDisplay() : rviz::Display()
 
   line_width_property_ = new rviz::FloatProperty("Line Width (mm)", 5.0,
                                                  "The width of toolpath lines",
+                                                 this, &GcodeDisplay::redraw);
+
+  hide_travel_property_ = new rviz::BoolProperty("Hide Travel", false,
+                                                 "Controls whether travel "
+                                                 "paths are drawn",
                                                  this, &GcodeDisplay::redraw);
 
   display_style_property_ =
@@ -74,7 +75,6 @@ GcodeDisplay::~GcodeDisplay()
 }
 
 void GcodeDisplay::clearMarkers() { markers_.clear(); }
-
 void GcodeDisplay::redraw()
 {
   for (auto& toolpath : markers_)
@@ -91,26 +91,10 @@ void GcodeDisplay::onDisable()
 }
 
 void GcodeDisplay::updateQueueSize() { subscribe(); }
-
 void GcodeDisplay::updateTopic()
 {
   onDisable();
   onEnable();
-}
-
-void GcodeDisplay::updateLineWidth()
-{
-  // redraw gcode
-}
-
-void GcodeDisplay::updateDisplayStyle()
-{
-  // redraw gcode
-}
-
-void GcodeDisplay::updateColorMethod()
-{
-  // redraw gcode
 }
 
 void GcodeDisplay::subscribe()

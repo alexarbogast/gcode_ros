@@ -8,6 +8,10 @@
 #include <gcode_msgs/Toolpath.h>
 
 #include <rviz/display.h>
+#include <rviz/properties/bool_property.h>
+#include <rviz/properties/enum_property.h>
+#include <rviz/properties/tf_frame_property.h>
+#include <rviz/properties/color_property.h>
 
 namespace Ogre
 {
@@ -19,9 +23,6 @@ namespace rviz
 class RosTopicProperty;
 class IntProperty;
 class FloatProperty;
-class EnumProperty;
-class TfFrameProperty;
-class ColorProperty;
 }  // namespace rviz
 
 namespace gcode_rviz
@@ -65,6 +66,7 @@ protected:
   rviz::TfFrameProperty* frame_property_;
   rviz::IntProperty* queue_size_property_;
   rviz::FloatProperty* line_width_property_;
+  rviz::BoolProperty* hide_travel_property_;
   rviz::EnumProperty* display_style_property_;
   rviz::EnumProperty* color_method_property_;
   rviz::ColorProperty* layer_color_property_;
@@ -72,9 +74,6 @@ protected:
 private Q_SLOTS:
   void updateQueueSize();
   void updateTopic();
-  void updateLineWidth();
-  void updateDisplayStyle();
-  void updateColorMethod();
 
 private:
   typedef std::map<int32_t, ToolpathMarkerPtr> M_IDToToolpathMarker;
