@@ -12,6 +12,7 @@
 #include <rviz/properties/enum_property.h>
 #include <rviz/properties/tf_frame_property.h>
 #include <rviz/properties/color_property.h>
+#include <rviz/properties/float_property.h>
 
 namespace Ogre
 {
@@ -22,7 +23,6 @@ namespace rviz
 {
 class RosTopicProperty;
 class IntProperty;
-class FloatProperty;
 }  // namespace rviz
 
 namespace gcode_rviz

@@ -8,6 +8,7 @@
 namespace rviz
 {
 class DisplayContext;
+class Shape;
 }  // namespace rviz
 
 namespace gcode_rviz
@@ -43,6 +44,9 @@ protected:
   bool transform(const gcode_msgs::ToolpathConstPtr& message,
                  Ogre::Vector3& pos, Ogre::Quaternion& orient);
 
+  void addLines(const gcode_msgs::ToolpathConstPtr& message);
+  void addCylinders(const gcode_msgs::ToolpathConstPtr& message);
+
   void getLayerColor(Ogre::ColourValue& color) const;
   void getMoveColor(const gcode_msgs::Move& move,
                     Ogre::ColourValue& color) const;
@@ -55,6 +59,9 @@ protected:
 
   Ogre::ManualObject* manual_object_;
   size_t n_lines_ = 0;
+
+  // Ogre::Entity* cylinder_;
+  std::vector<Ogre::SceneNode*> cylinder_nodes_;
 };
 typedef boost::shared_ptr<ToolpathMarker> ToopathMarkerPtr;
 

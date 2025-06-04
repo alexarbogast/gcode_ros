@@ -5,7 +5,6 @@
 #include <rviz/display_context.h>
 #include <rviz/properties/ros_topic_property.h>
 #include <rviz/properties/int_property.h>
-#include <rviz/properties/float_property.h>
 
 namespace gcode_rviz
 {
