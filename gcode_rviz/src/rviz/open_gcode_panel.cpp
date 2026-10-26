@@ -6,7 +6,7 @@
 
 namespace gcode_rviz
 {
-OpenGcodePanel::OpenGcodePanel(QWidget* parent) : rviz::Panel(parent) {}
+OpenGcodePanel::OpenGcodePanel(QWidget* parent) : rviz_common::Panel(parent) {}
 OpenGcodePanel::~OpenGcodePanel() = default;
 
 void OpenGcodePanel::onInitialize()
@@ -56,4 +56,4 @@ void OpenGcodePanel::BrowseButtonClicked()
 }  // namespace gcode_rviz
 
 #include <pluginlib/class_list_macros.hpp>
-PLUGINLIB_EXPORT_CLASS(gcode_rviz::OpenGcodePanel, rviz::Panel)
+PLUGINLIB_EXPORT_CLASS(gcode_rviz::OpenGcodePanel, rviz_common::Panel)

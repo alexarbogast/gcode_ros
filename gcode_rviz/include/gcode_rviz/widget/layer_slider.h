@@ -11,7 +11,7 @@ class LayerSliderWidget : public QWidget
 {
   Q_OBJECT
 public:
-  LayerSliderWidget(QWidget* parent = 0);
+  LayerSliderWidget(QWidget* parent = nullptr);
 
   void setMinimum(int value);
   void setMaximum(int value);
@@ -38,8 +38,8 @@ class LayerRangeWidget : public QWidget
 {
   Q_OBJECT
 public:
-  LayerRangeWidget(QWidget* parent = 0);
-  virtual ~LayerRangeWidget() = default;
+  LayerRangeWidget(QWidget* parent = nullptr);
+  virtual ~LayerRangeWidget() override = default;
 
   void setUpperValue(int value);
   inline int getUpperValue() const { return max_layer_slider_->value(); }

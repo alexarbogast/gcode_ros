@@ -1,7 +1,7 @@
 #ifndef OPEN_GCODE_PANEL_H
 #define OPEN_GCODE_PANEL_H
 
-#include <rviz/panel.h>
+#include <rviz_common/panel.hpp>
 
 #include <QLabel>
 #include <QPushButton>
@@ -12,7 +12,7 @@
 
 namespace gcode_rviz
 {
-class OpenGcodePanel : public rviz::Panel
+class OpenGcodePanel : public rviz_common::Panel
 {
   Q_OBJECT
 public:

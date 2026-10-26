@@ -1,39 +1,66 @@
-cmake_minimum_required(VERSION 3.0.2)
+cmake_minimum_required(VERSION 3.14.4)
 project(gcode_core)
 
-find_package(catkin REQUIRED COMPONENTS roscpp roslib)
+if(NOT CMAKE_CXX_STANDARD)
+  set(CMAKE_CXX_STANDARD 17)
+endif()
+if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  add_compile_options(-Wall -Wextra -Wpedantic)
+endif()
+
+find_package(ament_cmake REQUIRED)
 find_package(Eigen3 REQUIRED)
+find_package(ament_index_cpp REQUIRED)
 
-catkin_package(
-    INCLUDE_DIRS include
-    LIBRARIES ${PROJECT_NAME}
-    CATKIN_DEPENDS roscpp roslib
+add_library(${PROJECT_NAME} SHARED
+  src/core/gcode.cpp
+  src/core/toolpath.cpp
+  src/core/interpreter.cpp
 )
-
-include_directories(
-    include
-    ${catkin_INCLUDE_DIRS}
-)
-
-add_library(${PROJECT_NAME} 
-    src/core/gcode.cpp
-    src/core/toolpath.cpp
-    src/core/interpreter.cpp)
-target_link_libraries(${PROJECT_NAME} PUBLIC
-    Eigen3::Eigen
-    ${catkin_LIBRARIES})
 target_include_directories(${PROJECT_NAME} PUBLIC
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    "$<INSTALL_INTERFACE:include>")
-target_include_directories(${PROJECT_NAME} SYSTEM PUBLIC
-    ${EIGEN3_INCLUDE_DIRS}
-    ${catkin_INCLUDE_DIRS})
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  Eigen3::Eigen
+)
 
 # build all examples, for now
 add_executable(gcode_example docs/gcode_example.cpp)
-target_link_libraries(gcode_example ${PROJECT_NAME} ${catkin_LIBRARIES})
 target_include_directories(gcode_example PRIVATE
-    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    "$<INSTALL_INTERFACE:include>")
-target_include_directories(gcode_example SYSTEM PRIVATE
-    ${catkin_INCLUDE_DIRS})
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
+  $<INSTALL_INTERFACE:include>
+)
+target_link_libraries(gcode_example ${PROJECT_NAME})
+ament_target_dependencies(gcode_example ament_index_cpp)
+
+######################################################
+# Install executables and libraries
+install(
+  TARGETS ${PROJECT_NAME}
+  EXPORT export_${PROJECT_NAME}
+  ARCHIVE DESTINATION lib
+  LIBRARY DESTINATION lib
+  RUNTIME DESTINATION bin
+)
+
+install(
+  TARGETS gcode_example
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION include/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY resources
+  DESTINATION share/${PROJECT_NAME}
+)
+
+ament_export_include_directories(include)
+ament_export_libraries(${PROJECT_NAME})
+ament_export_dependencies(Eigen3 ament_index_cpp)
+
+ament_package()

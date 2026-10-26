@@ -1,25 +1,27 @@
 <?xml version="1.0"?>
-<package format="2">
+<package format="3">
   <name>gcode_rviz</name>
-  <version>0.0.1</version>
+  <version>0.2.0</version>
   <description>The gcode_rviz package</description>
 
-  <maintainer email="arbogastaw@gmail.com">Alex Arbogasts</maintainer>
+  <maintainer email="arbogastaw@gmail.com">Alex Arbogast</maintainer>
 
   <license>MIT</license>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <depend>roscpp</depend>
-  <depend>rviz</depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>rviz_common</depend>
+  <depend>rviz2</depend>
   <depend>tf2_eigen</depend>
   <depend>tf2_ros</depend>
+  <depend>pluginlib</depend>
+  <depend>rclcpp</depend>
+  <depend>gcode_core</depend>
   <depend>visualization_msgs</depend>
   <depend>geometry_msgs</depend>
-  <depend>eigen_conversions</depend>
-  <depend>gcode_core</depend>
-  <depend>pluginlib</depend>
 
   <export>
-    <rviz plugin="${prefix}/gcode_rviz_plugin_description.xml"/>
+    <build_type>ament_cmake</build_type>
+    <rviz_common plugin="${prefix}/gcode_rviz_plugin_description.xml"/>
   </export>
 </package>

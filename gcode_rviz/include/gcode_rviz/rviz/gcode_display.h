@@ -1,11 +1,11 @@
 #ifndef GCODE_DISPLAY_H
 #define GCODE_DISPLAY_H
 
-#include <rviz/display.h>
+#include <rviz_common/display.hpp>
 
 namespace gcode_rviz
 {
-class GcodeDisplay : public rviz::Display
+class GcodeDisplay : public rviz_common::Display
 {
   Q_OBJECT
 public:

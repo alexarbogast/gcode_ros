@@ -1,14 +1,18 @@
 <?xml version="1.0"?>
-<package format="2">
+<package format="3">
   <name>gcode_core</name>
-  <version>0.1.0</version>
+  <version>0.2.0</version>
   <description>The gcode_core package</description>
 
   <maintainer email="arbogastaw@gmail.com">Alex Arbogast</maintainer>
   <license>MIT</license>
   <author email="arbogastaw@gmail.com">Alex Arbogast</author>
 
-  <buildtool_depend>catkin</buildtool_depend>
-  <depend>roscpp</depend>
-  <depend>roslib</depend>
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>ament_index_cpp</depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
 </package>

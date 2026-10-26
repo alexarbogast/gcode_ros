@@ -1,29 +1,29 @@
 #include <gcode_core/core/move_command.h>
 #include <gcode_rviz/widget/layer_range_visualization.h>
 
-#include <tf2_eigen/tf2_eigen.h>
-#include <tf2/convert.h>
+#include <tf2/convert.hpp>
+#include <tf2_eigen/tf2_eigen.hpp>
 
-#include <visualization_msgs/Marker.h>
-#include <geometry_msgs/Quaternion.h>
-#include <visualization_msgs/MarkerArray.h>
+#include <geometry_msgs/msg/quaternion.hpp>
 
 #include <unordered_map>
 
 namespace gcode_rviz
 {
-const std_msgs::ColorRGBA CARBON = create_color_rgba(51, 51, 51, 255);
-const std_msgs::ColorRGBA FEROCIOUS_FOX = create_color_rgba(223, 91, 30, 255);
-const std_msgs::ColorRGBA GREEN_BLUE = create_color_rgba(58, 183, 149, 255);
-const std_msgs::ColorRGBA BROCADE = create_color_rgba(139, 133, 193, 255);
-const std_msgs::ColorRGBA MELTED_BUTTER = create_color_rgba(255, 207, 86, 255);
-const std_msgs::ColorRGBA GUNMETAL = create_color_rgba(36, 47, 64, 255);
-const std_msgs::ColorRGBA SATIN_GOLD = create_color_rgba(204, 164, 59, 255);
-const std_msgs::ColorRGBA TOMATO = create_color_rgba(249, 87, 56, 255);
-const std_msgs::ColorRGBA KELLY_GREEN = create_color_rgba(67, 185, 41, 255);
+// clang-format off
+const std_msgs::msg::ColorRGBA CARBON = create_color_rgba(51, 51, 51, 255);
+const std_msgs::msg::ColorRGBA FEROCIOUS_FOX = create_color_rgba(223, 91, 30, 255);
+const std_msgs::msg::ColorRGBA GREEN_BLUE = create_color_rgba(58, 183, 149, 255);
+const std_msgs::msg::ColorRGBA BROCADE = create_color_rgba(139, 133, 193, 255);
+const std_msgs::msg::ColorRGBA MELTED_BUTTER = create_color_rgba(255, 207, 86, 255);
+const std_msgs::msg::ColorRGBA GUNMETAL = create_color_rgba(36, 47, 64, 255);
+const std_msgs::msg::ColorRGBA SATIN_GOLD = create_color_rgba(204, 164, 59, 255);
+const std_msgs::msg::ColorRGBA TOMATO = create_color_rgba(249, 87, 56, 255);
+const std_msgs::msg::ColorRGBA KELLY_GREEN = create_color_rgba(67, 185, 41, 255);
+// clang-format on
 
 static const int N_COLORS = 8;
-static std::unordered_map<int, std_msgs::ColorRGBA>
+static std::unordered_map<int, std_msgs::msg::ColorRGBA>
     ToolColor({ { 0, FEROCIOUS_FOX },
                 { 1, GREEN_BLUE },
                 { 2, BROCADE },
@@ -35,10 +35,10 @@ static std::unordered_map<int, std_msgs::ColorRGBA>
 
 std::mt19937 LayerRangeVisualization::mt_random_engine_(1415926);
 
-std_msgs::ColorRGBA create_color_rgba(uint8_t r, uint8_t g, uint8_t b,
-                                      uint8_t a)
+std_msgs::msg::ColorRGBA create_color_rgba(uint8_t r, uint8_t g, uint8_t b,
+                                           uint8_t a)
 {
-  std_msgs::ColorRGBA color;
+  std_msgs::msg::ColorRGBA color;
 
   color.r = (float)r / 255;
   color.g = (float)g / 255;
@@ -48,24 +48,28 @@ std_msgs::ColorRGBA create_color_rgba(uint8_t r, uint8_t g, uint8_t b,
   return color;
 }
 
-geometry_msgs::Pose create_identity_pose()
+geometry_msgs::msg::Pose create_identity_pose()
 {
-  geometry_msgs::Pose pose;
+  geometry_msgs::msg::Pose pose;
   pose.orientation.w = 1;
   return pose;
 }
 
 LayerRangeVisualization::LayerRangeVisualization(
     const std::string& base_frame, const std::string& marker_topic)
-  : base_frame_(base_frame)
-  , color_(FEROCIOUS_FOX)
-  , marker_lifetime_(ros::Duration(0))
+  : base_frame_(base_frame), color_(FEROCIOUS_FOX)
 {
-  nh_ = ros::NodeHandle("~");
-  markers_pub_ =
-      nh_.advertise<visualization_msgs::MarkerArray>(marker_topic, 10, true);
-  ROS_DEBUG_STREAM("Publishing gcode visualization marker on topic"
-                   << marker_topic);
+  if (!node_)
+  {
+    node_ = std::make_shared<rclcpp::Node>("layer_range_visualization");
+  }
+
+  markers_pub_ = node_->create_publisher<visualization_msgs::msg::MarkerArray>(
+      marker_topic, rclcpp::QoS(10).transient_local());
+
+  RCLCPP_DEBUG(node_->get_logger(),
+               "Publishing gcode visualization marker on topic %s",
+               marker_topic.c_str());
 
   initializeMarkers();
 }
@@ -74,13 +78,13 @@ void LayerRangeVisualization::initializeMarkers()
 {
   // reset marker
   reset_template_.header.frame_id = base_frame_;
-  reset_template_.header.stamp = ros::Time();
-  reset_template_.action = visualization_msgs::Marker::DELETEALL;
+  reset_template_.header.stamp = node_->get_clock()->now();
+  reset_template_.action = visualization_msgs::msg::Marker::DELETEALL;
   reset_template_.pose = create_identity_pose();
 
   // cylinder marker
-  cylinder_template_.action = visualization_msgs::Marker::ADD;
-  cylinder_template_.type = visualization_msgs::Marker::CYLINDER;
+  cylinder_template_.action = visualization_msgs::msg::Marker::ADD;
+  cylinder_template_.type = visualization_msgs::msg::Marker::CYLINDER;
   cylinder_template_.lifetime = marker_lifetime_;
   cylinder_template_.pose = create_identity_pose();
 }
@@ -101,7 +105,7 @@ void LayerRangeVisualization::update(int lower, int upper, bool reset)
 
 void LayerRangeVisualization::reset()
 {
-  visualization_msgs::Marker reset_marker = reset_template_;
+  visualization_msgs::msg::Marker reset_marker = reset_template_;
   marker_array_.markers.push_back(reset_marker);
   trigger();
   active_layers_.clear();
@@ -164,7 +168,7 @@ void LayerRangeVisualization::resetRandomColorMap()
 void LayerRangeVisualization::publishLayer(int layer)
 {
   // ============ layer color ==============
-  std_msgs::ColorRGBA layer_color = CARBON;
+  std_msgs::msg::ColorRGBA layer_color = CARBON;
   switch (color_method_)
   {
     case ColorMethod::RandomByLayer:
@@ -192,13 +196,13 @@ void LayerRangeVisualization::publishLayer(int layer)
 }
 
 bool LayerRangeVisualization::publishPath(const gcode_core::ToolpathPtr& path,
-                                          const std_msgs::ColorRGBA& color,
+                                          const std_msgs::msg::ColorRGBA& color,
                                           const std::string& ns)
 {
   if (path->size() < 2)
   {
-    ROS_WARN_STREAM("Skipping path because it contains " << path->size()
-                                                         << " points");
+    RCLCPP_WARN(node_->get_logger(),
+                "Skipping path because it contains %lu points", path->size());
     return false;
   }
 
@@ -213,7 +217,7 @@ bool LayerRangeVisualization::publishPath(const gcode_core::ToolpathPtr& path,
       continue;
     }
 
-    std_msgs::ColorRGBA cmd_color = color;
+    std_msgs::msg::ColorRGBA cmd_color = color;
     getCommandColor(cmd_end, cmd_color);
 
     publishCylinder(cmd_start.translation() / 1000,
@@ -223,17 +227,17 @@ bool LayerRangeVisualization::publishPath(const gcode_core::ToolpathPtr& path,
   return true;
 }
 
-bool LayerRangeVisualization::publishCylinder(const Eigen::Vector3d& start,
-                                              const Eigen::Vector3d& end,
-                                              const std_msgs::ColorRGBA& color,
-                                              const std::string& ns)
+bool LayerRangeVisualization::publishCylinder(
+    const Eigen::Vector3d& start, const Eigen::Vector3d& end,
+    const std_msgs::msg::ColorRGBA& color, const std::string& ns)
 {
   Eigen::Vector3d axis_vector = end - start;
   double dist = axis_vector.norm();
 
   if (std::abs(dist) < std::numeric_limits<double>::epsilon())
   {
-    ROS_WARN("Cylinder length smaller than epsilon");
+    RCLCPP_WARN(node_->get_logger(), "Cylinder length smaller than epsilon");
+
     return false;
   }
 
@@ -253,8 +257,8 @@ bool LayerRangeVisualization::publishCylinder(const Eigen::Vector3d& start,
   pose = q;
   pose.translation() = 0.5 * (start + end);
 
-  visualization_msgs::Marker cylinder = cylinder_template_;
-  cylinder.header.stamp = ros::Time::now();
+  visualization_msgs::msg::Marker cylinder = cylinder_template_;
+  cylinder.header.stamp = node_->get_clock()->now();
   cylinder.header.frame_id = base_frame_;
   cylinder.ns = ns;
   cylinder_template_.id++;
@@ -274,22 +278,22 @@ void LayerRangeVisualization::removeLayer(int layer)
   std::size_t max_id = layers_[layer]->size();
   for (std::size_t i = 0; i < max_id; ++i)
   {
-    visualization_msgs::Marker reset_marker = reset_template_;
+    visualization_msgs::msg::Marker reset_marker = reset_template_;
     reset_marker.id = i;
     reset_marker.ns = "layer" + std::to_string(layer);
-    reset_marker.action = visualization_msgs::Marker::DELETE;
+    reset_marker.action = visualization_msgs::msg::Marker::DELETE;
     marker_array_.markers.push_back(reset_marker);
   }
 }
 
 void LayerRangeVisualization::trigger()
 {
-  markers_pub_.publish(marker_array_);
+  markers_pub_->publish(marker_array_);
   marker_array_.markers.clear();
 }
 
 void LayerRangeVisualization::getCommandColor(
-    const gcode_core::MoveCommand& cmd, std_msgs::ColorRGBA& color) const
+    const gcode_core::MoveCommand& cmd, std_msgs::msg::ColorRGBA& color) const
 {
   if (cmd.getCommandType() == gcode_core::MoveCommandType::Travel)
   {
